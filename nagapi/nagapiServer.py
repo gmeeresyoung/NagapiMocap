@@ -15,7 +15,7 @@ import ctypes
 import struct
 
 
-from nagapi import FpsClock
+from nagapi.nagapi import FpsClock
 ###
 # Initalize fps clock
 fpsclock = FpsClock(10)

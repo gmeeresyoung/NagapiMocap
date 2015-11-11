@@ -16,10 +16,10 @@ import yaml
 import re
 
 from MocapGraphicsView import MocapBox
-from MocapServer import Server
-from MocapUtils import *
+from nagapi.MocapServer import Server
+from nagapi.MocapUtils import *
 
-from nagapi import FpsClock
+from nagapi.nagapi import FpsClock
 ###
 # Initalize fps clock
 fpsclock = FpsClock(10)
@@ -86,39 +86,6 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         self.connect(self.editDiolog.spinBox_colID, QtCore.SIGNAL("valueChanged(int)"), self.graphicsView.updateColour)
         
         self.connect(self.editDiolog.spinBox_colID, QtCore.SIGNAL("valueChanged(int)"), self.graphicsView.updateColour)
-        
-        #filter connections
-        '''
-        self.connect(self.editDiolog.groupBox_x, QtCore.SIGNAL("toggled(bool)"), self.updateOutputChannel)
-        self.connect(self.editDiolog.groupBox_y, QtCore.SIGNAL("toggled(bool)"), self.updateOutputChannel)
-        self.connect(self.editDiolog.groupBox_w, QtCore.SIGNAL("toggled(bool)"), self.updateOutputChannel)
-        self.connect(self.editDiolog.groupBox_h, QtCore.SIGNAL("toggled(bool)"), self.updateOutputChannel)
-
-        self.connect(self.editDiolog.spinBox_filterBuffSize_x, QtCore.SIGNAL("valueChanged(int)"), self.updateBufferSize)
-        self.connect(self.editDiolog.spinBox_filterBuffSize_y, QtCore.SIGNAL("valueChanged(int)"), self.updateBufferSize)
-        self.connect(self.editDiolog.spinBox_filterBuffSize_w, QtCore.SIGNAL("valueChanged(int)"), self.updateBufferSize)
-        self.connect(self.editDiolog.spinBox_filterBuffSize_h, QtCore.SIGNAL("valueChanged(int)"), self.updateBufferSize)
-        
-        self.connect(self.editDiolog.doubleSpinBox_feq_x, QtCore.SIGNAL("valueChanged(double)"), self.updateLowPassFreq)
-        self.connect(self.editDiolog.doubleSpinBox_feq_y, QtCore.SIGNAL("valueChanged(double)"), self.updateLowPassFreq)
-        self.connect(self.editDiolog.doubleSpinBox_feq_h, QtCore.SIGNAL("valueChanged(double)"), self.updateLowPassFreq)
-        self.connect(self.editDiolog.doubleSpinBox_feq_w, QtCore.SIGNAL("valueChanged(double)"), self.updateLowPassFreq)
-        
-        self.connect(self.editDiolog.radioButton_noF_x, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        self.connect(self.editDiolog.radioButton_noF_y, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        self.connect(self.editDiolog.radioButton_noF_w, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        self.connect(self.editDiolog.radioButton_noF_h, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        
-        self.connect(self.editDiolog.radioButton_gAve_x, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        self.connect(self.editDiolog.radioButton_gAve_y, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        self.connect(self.editDiolog.radioButton_gAve_w, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        self.connect(self.editDiolog.radioButton_gAve_h, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        
-        self.connect(self.editDiolog.radioButton_lowPassF_x, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        self.connect(self.editDiolog.radioButton_lowPassF_y, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        self.connect(self.editDiolog.radioButton_lowPassF_w, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        self.connect(self.editDiolog.radioButton_lowPassF_h, QtCore.SIGNAL("toggled(bool)"), self.updateFilterType)
-        '''
         
         self.connect(self.editDiolog.buttonBox, QtCore.SIGNAL("clicked(QAbstractButton*"), self.updatRegenData)
         self.connect(self.editDiolog.buttonBox, QtCore.SIGNAL("clicked(QAbstractButton*)"), self.updatRegenData)
@@ -195,15 +162,7 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         elif not self.actionClassifiedData.isChecked():
             self.actionRawData.setChecked(True)
             self.thread.rawData()            
-        
-    '''
-    def recordMocap(self,rec):
-        if rec:
-            self.emit(QtCore.SIGNAL("recording()"))
-        else:
-            self.emit(QtCore.SIGNAL("stopRecording()"))
-    '''
-                 
+          
     def recordMocap(self,startRec):
         if startRec:
             self.newRecordingFile()
@@ -226,15 +185,11 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             
             self.BoxSceneItems[tag].setRect (lcx, lcy, screenSpace_w, screenSpace_h)
             self.BoxSceneItems[tag].lable.setText(str(tag))
-            #self.BoxSceneItems[tag].setPos(x*2,y*2) 
-            #self.BoxSceneItems[tag].scaleBox(w*2,h*2)
         else:
-            self.BoxSceneItems[tag] = MocapBox(lcx, lcy, screenSpace_w, screenSpace_h)#MocapBox(screenSpace_w, screenSpace_h)
+            self.BoxSceneItems[tag] = MocapBox(lcx, lcy, screenSpace_w, screenSpace_h)
             
             self.BoxSceneItems[tag].setRect (lcx, lcy, screenSpace_w, screenSpace_h)
             self.BoxSceneItems[tag].lable.setText(str(tag))
-            #self.BoxSceneItems[tag].setPos(x*2,y*2)
-            #self.BoxSceneItems[tag].scaleBox(w*2,h*2)
             
             self.graphicsView.addMocapBox(self.BoxSceneItems[tag])       
         
@@ -266,6 +221,7 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             self.thread.closeServer()
     
     def stopingServer(self):
+        self.actionListenForConnections.setChecked(False)
         QMessageBox.information(self.parent(), " Server",
                 "Closing liserning server.")        
 

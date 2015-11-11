@@ -33,30 +33,6 @@ class Server(QThread):
         QThread.__init__(self, parent)
         self.exiting = False
         self.commandFromServer=None
-        '''
-        self.tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.tcpServer.setblocking(0)
-
-        # Bind the socket to the port
-        server_address = ('', 10000)
-        print >>sys.stderr, 'starting up on %s port %s' % server_address
-        self.tcpServer.bind(server_address)
-        
-        # Listen for incoming connections
-        self.tcpServer.listen(2)
-        
-        # wait for a connection for give time then close in none found
-        self.timeout = 3
-        
-        # Sockets from which we expect to read
-        self.inputs = [ self.tcpServer ]
-        self.mocapSendClientIP = ['192.168.0.17']
-        
-        
-        # Sockets to which we expect to write
-        self.outputs = [ ]
-        self.readCliantIP = ['192.168.0.10']
-        '''
         # Give the connection a queue for data we want to send/ reseve
         self.data_queues = dict()
         self.receve_queues = dict()
@@ -287,7 +263,6 @@ class Server(QThread):
             self.openRecording = None
        
     def run(self):
-        print "i want to load my client stuff befor i get here"
         while not self.exiting and self.inputs:
             readable, writable, exceptional = select.select(self.inputs, self.outputs, self.inputs, self.timeout)    
             if not (readable or writable or exceptional) or self.exiting:

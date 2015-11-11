@@ -3,7 +3,7 @@ Created on 7 Oct 2015
 
 @author: gregmeeresyoung
 '''
-from MocapUtils import MOCAP_ROGE_DATA
+from nagapi.MocapUtils import MOCAP_ROGE_DATA
 
 
 class Box(object):

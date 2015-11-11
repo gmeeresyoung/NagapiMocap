@@ -24,7 +24,21 @@ class FpsClock(deque):
     def start(self):
         self.__fpsTimer_start = time.time()
     
-    
+    def speed(self):
+        if self.__fpsTimer_start == None:
+            self.__fpsTimer_start = time.time()
+        
+        timeForFrame = time.time() - self.__fpsTimer_start
+        self.append(timeForFrame)
+        try:
+            ave = int(1/average(self))
+        except OverflowError:
+            ave = 1000000
+        
+        
+        self.__fpsTimer_start = timeForFrame + self.__fpsTimer_start          
+        return ave
+        
     def fps(self):
         if self.__fpsTimer_start == None:
             self.__fpsTimer_start = time.time()
