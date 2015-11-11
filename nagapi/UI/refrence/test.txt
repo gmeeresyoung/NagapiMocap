@@ -1,0 +1,323 @@
+0:
+  custemRege: {bottomRightX: 238.0, bottomRightY: 131.0, colourID: 2, custemRegen: false,
+    height: 70.0, topLeftX: 130.0, topLeftY: 61.0, width: 108.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 10, smartClasification: false}
+  tag: 1
+1:
+  custemRege: {bottomRightX: 318.0, bottomRightY: 233.0, colourID: 1, custemRegen: false,
+    height: 68.0, topLeftX: 264.0, topLeftY: 165.0, width: 54.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 20, smartClasification: false}
+  tag: 4
+2:
+  custemRege: {bottomRightX: 126.0, bottomRightY: 251.0, colourID: 1, custemRegen: false,
+    height: 75.0, topLeftX: 70.0, topLeftY: 176.0, width: 56.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 10, smartClasification: false}
+  tag: 7
+3:
+  custemRege: {bottomRightX: 258.0, bottomRightY: 188.0, colourID: 1, custemRegen: false,
+    height: 36.0, topLeftX: 210.0, topLeftY: 152.0, width: 48.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.060000000000000005, gasianAv: false,
+      lowPassFilter: true, noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.060000000000000005, gasianAv: false,
+      lowPassFilter: true, noFilter: false, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 20, smartClasification: false}
+  tag: 2
+4:
+  custemRege: {bottomRightX: 181.0, bottomRightY: 191.0, colourID: 1, custemRegen: false,
+    height: 38.0, topLeftX: 132.0, topLeftY: 153.0, width: 49.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.060000000000000005, gasianAv: false,
+      lowPassFilter: true, noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.060000000000000005, gasianAv: false,
+      lowPassFilter: true, noFilter: false, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 20, smartClasification: false}
+  tag: 3
+5:
+  custemRege: {bottomRightX: 258.0, bottomRightY: 246.0, colourID: 2, custemRegen: false,
+    height: 59.0, topLeftX: 213.0, topLeftY: 187.0, width: 45.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.060000000000000005, gasianAv: false,
+      lowPassFilter: true, noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.060000000000000005, gasianAv: false,
+      lowPassFilter: true, noFilter: false, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 20, smartClasification: false}
+  tag: 5
+6:
+  custemRege: {bottomRightX: 183.0, bottomRightY: 248.0, colourID: 2, custemRegen: false,
+    height: 63.0, topLeftX: 141.0, topLeftY: 185.0, width: 42.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.060000000000000005, gasianAv: false,
+      lowPassFilter: true, noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.060000000000000005, gasianAv: false,
+      lowPassFilter: true, noFilter: false, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 20, smartClasification: false}
+  tag: 6
+7:
+  custemRege: {bottomRightX: 362.0, bottomRightY: 371.0, colourID: 1, custemRegen: false,
+    height: 65.0, topLeftX: 313.0, topLeftY: 306.0, width: 49.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 8
+8:
+  custemRege: {bottomRightX: 99.0, bottomRightY: 372.0, colourID: 1, custemRegen: false,
+    height: 63.0, topLeftX: 41.0, topLeftY: 309.0, width: 58.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 9
+9:
+  custemRege: {bottomRightX: 348.0, bottomRightY: 438.0, colourID: 1, custemRegen: false,
+    height: 58.0, topLeftX: 287.0, topLeftY: 380.0, width: 61.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 10
+10:
+  custemRege: {bottomRightX: 132.0, bottomRightY: 441.0, colourID: 1, custemRegen: false,
+    height: 53.0, topLeftX: 66.0, topLeftY: 388.0, width: 66.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 11
+11:
+  custemRege: {bottomRightX: 389.0, bottomRightY: 501.0, colourID: 1, custemRegen: false,
+    height: 50.0, topLeftX: 347.0, topLeftY: 451.0, width: 42.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 12
+12:
+  custemRege: {bottomRightX: 308.0, bottomRightY: 520.0, colourID: 1, custemRegen: false,
+    height: 60.0, topLeftX: 241.0, topLeftY: 460.0, width: 67.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 13
+13:
+  custemRege: {bottomRightX: 189.0, bottomRightY: 552.0, colourID: 1, custemRegen: false,
+    height: 84.0, topLeftX: 118.0, topLeftY: 468.0, width: 71.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 14
+14:
+  custemRege: {bottomRightX: 85.0, bottomRightY: 542.0, colourID: 1, custemRegen: false,
+    height: 67.0, topLeftX: 31.0, topLeftY: 475.0, width: 54.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 15
+15:
+  custemRege: {bottomRightX: 356.0, bottomRightY: 518.0, colourID: 2, custemRegen: false,
+    height: 73, topLeftX: 312.0, topLeftY: 445.0, width: 44}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 50, smartClasification: false}
+  tag: 16
+16:
+  custemRege: {bottomRightX: 146.0, bottomRightY: 559.0, colourID: 2, custemRegen: false,
+    height: 123, topLeftX: 63.0, topLeftY: 436.0, width: 83}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: !!python/object/apply:sip._unpickle_type
+  - PyQt4.QtCore
+  - QString
+  - !!python/tuple [!!python/unicode '']
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 50, smartClasification: false}
+  tag: 17

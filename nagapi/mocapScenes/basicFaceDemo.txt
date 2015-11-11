@@ -1,0 +1,80 @@
+0:
+  custemRege: {bottomRightX: 237.0, bottomRightY: 144.0, colourID: 1, custemRegen: false,
+    height: 65, topLeftX: 183.0, topLeftY: 79.0, width: 54}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: syncControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 0
+1:
+  custemRege: {bottomRightX: 103.0, bottomRightY: 288.0, colourID: 1, custemRegen: false,
+    height: 63, topLeftX: 61.0, topLeftY: 225.0, width: 42}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LmouthControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 0
+2:
+  custemRege: {bottomRightX: 348.0, bottomRightY: 280.0, colourID: 1, custemRegen: false,
+    height: 69, topLeftX: 314.0, topLeftY: 211.0, width: 34}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RmouthControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 0
+3:
+  custemRege: {bottomRightX: 311.0, bottomRightY: 582.0, colourID: 1, custemRegen: false,
+    height: 42.0, topLeftX: 277.0, topLeftY: 540.0, width: 34.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: false}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RInnerBrowControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 0
+4:
+  custemRege: {bottomRightX: 170.0, bottomRightY: 582.0, colourID: 1, custemRegen: false,
+    height: 40, topLeftX: 139.0, topLeftY: 542.0, width: 31}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: false}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LInnerBrowControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 0

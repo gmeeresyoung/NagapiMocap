@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>404</width>
+    <height>724</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Nagapi Mocap</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>402</width>
+      <height>642</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="MocapGraphicsView" name="graphicsView">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>411</width>
+       <height>651</height>
+      </rect>
+     </property>
+     <property name="sceneRect">
+      <rectf>
+       <x>0.000000000000000</x>
+       <y>0.000000000000000</y>
+       <width>400.000000000000000</width>
+       <height>640.000000000000000</height>
+      </rectf>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>404</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_Nagapi">
+    <property name="title">
+     <string>&amp;Nagapi</string>
+    </property>
+    <addaction name="actionAbout_nagapi_mocap"/>
+   </widget>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="action_New"/>
+    <addaction name="action_Open"/>
+    <addaction name="actionResent_files"/>
+    <addaction name="separator"/>
+    <addaction name="action_Save"/>
+    <addaction name="action_Save_as"/>
+    <addaction name="separator"/>
+    <addaction name="action_Close"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionDelet_selected"/>
+    <addaction name="actionAddClasificationRegen"/>
+    <addaction name="actionEditClasificationRegen"/>
+    <addaction name="separator"/>
+    <addaction name="actionPrefrenses"/>
+   </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionShow_markers"/>
+    <addaction name="actionShow_marker_centers"/>
+    <addaction name="actionShow_bg"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionMocap_help"/>
+   </widget>
+   <addaction name="menu_Nagapi"/>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menu_View"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionListenForConnections"/>
+   <addaction name="separator"/>
+   <addaction name="actionRawData"/>
+   <addaction name="actionClassifiedData"/>
+   <addaction name="actionFilterData"/>
+   <addaction name="separator"/>
+   <addaction name="actionAddClasificationRegen"/>
+   <addaction name="actionEditClasificationRegen"/>
+   <addaction name="actionDelet_selected"/>
+   <addaction name="separator"/>
+   <addaction name="actionRecordMocap"/>
+  </widget>
+  <action name="actionAbout_nagapi_mocap">
+   <property name="text">
+    <string>about nagapi mocap</string>
+   </property>
+  </action>
+  <action name="action_New">
+   <property name="text">
+    <string>&amp;New</string>
+   </property>
+  </action>
+  <action name="action_Open">
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+  </action>
+  <action name="actionResent_files">
+   <property name="text">
+    <string>resent files</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="action_Save_as">
+   <property name="text">
+    <string>&amp;Save as</string>
+   </property>
+  </action>
+  <action name="action_Close">
+   <property name="text">
+    <string>&amp;Close</string>
+   </property>
+  </action>
+  <action name="actionListenForConnections">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="MyIcons/png/nagapiMocapIcons.qrc">
+     <normaloff>:/tools/ears2.png</normaloff>:/tools/ears2.png</iconset>
+   </property>
+   <property name="text">
+    <string>ListenForConnections</string>
+   </property>
+   <property name="toolTip">
+    <string>listen for incomming connections</string>
+   </property>
+  </action>
+  <action name="actionRawData">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="MyIcons/png/nagapiMocapIcons.qrc">
+     <normaloff>:/tools/raw.png</normaloff>:/tools/raw.png</iconset>
+   </property>
+   <property name="text">
+    <string>RawData</string>
+   </property>
+   <property name="toolTip">
+    <string>raw data</string>
+   </property>
+  </action>
+  <action name="actionClassifiedData">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="MyIcons/png/nagapiMocapIcons.qrc">
+     <normaloff>:/tools/identity6.png</normaloff>:/tools/identity6.png</iconset>
+   </property>
+   <property name="text">
+    <string>ClassifiedData</string>
+   </property>
+   <property name="toolTip">
+    <string>Classified data</string>
+   </property>
+  </action>
+  <action name="actionFilterData">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="MyIcons/png/nagapiMocapIcons.qrc">
+     <normaloff>:/tools/drink161.png</normaloff>:/tools/drink161.png</iconset>
+   </property>
+   <property name="text">
+    <string>FilterData</string>
+   </property>
+   <property name="toolTip">
+    <string>filter data</string>
+   </property>
+  </action>
+  <action name="actionAddClasificationRegen">
+   <property name="icon">
+    <iconset resource="MyIcons/png/nagapiMocapIcons.qrc">
+     <normaloff>:/tools/triangle7.png</normaloff>:/tools/triangle7.png</iconset>
+   </property>
+   <property name="text">
+    <string>AddClasificationRegen</string>
+   </property>
+   <property name="toolTip">
+    <string>add clasification regen</string>
+   </property>
+  </action>
+  <action name="actionEditClasificationRegen">
+   <property name="icon">
+    <iconset resource="MyIcons/png/nagapiMocapIcons.qrc">
+     <normaloff>:/tools/pencil90.png</normaloff>:/tools/pencil90.png</iconset>
+   </property>
+   <property name="text">
+    <string>EditClasificationRegen</string>
+   </property>
+   <property name="toolTip">
+    <string>edit clasification regen</string>
+   </property>
+  </action>
+  <action name="actionRecordMocap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="MyIcons/png/nagapiMocapIcons.qrc">
+     <normaloff>:/tools/video35.png</normaloff>:/tools/video35.png</iconset>
+   </property>
+   <property name="text">
+    <string>RecordMocap</string>
+   </property>
+   <property name="toolTip">
+    <string>recod mocap</string>
+   </property>
+  </action>
+  <action name="actionMocap_help">
+   <property name="text">
+    <string>mocap help</string>
+   </property>
+  </action>
+  <action name="actionShow_markers">
+   <property name="text">
+    <string>show markers</string>
+   </property>
+  </action>
+  <action name="actionShow_marker_centers">
+   <property name="text">
+    <string>show marker centers</string>
+   </property>
+  </action>
+  <action name="actionShow_bg">
+   <property name="text">
+    <string>show bg</string>
+   </property>
+  </action>
+  <action name="actionDelet_selected">
+   <property name="icon">
+    <iconset resource="MyIcons/png/nagapiMocapIcons.qrc">
+     <normaloff>:/tools/rubbish.png</normaloff>:/tools/rubbish.png</iconset>
+   </property>
+   <property name="text">
+    <string>delete selected</string>
+   </property>
+   <property name="shortcut">
+    <string>Backspace</string>
+   </property>
+  </action>
+  <action name="actionPrefrenses">
+   <property name="icon">
+    <iconset resource="MyIcons/png/nagapiMocapIcons.qrc">
+     <normaloff>:/tools/music236.png</normaloff>:/tools/music236.png</iconset>
+   </property>
+   <property name="text">
+    <string>prefrenses</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MocapGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>MocapGraphicsView.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="MyIcons/png/nagapiMocapIcons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

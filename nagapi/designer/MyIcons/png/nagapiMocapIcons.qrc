@@ -1,0 +1,18 @@
+<RCC>
+  <qresource prefix="tools">
+    <file>music236.png</file>
+    <file>rubbish.png</file>
+    <file>video35.png</file>
+    <file>pencil90.png</file>
+    <file>triangle7.png</file>
+    <file>connected22.png</file>
+    <file>document244.png</file>
+    <file>drink161.png</file>
+    <file>ears2.png</file>
+    <file>filter3.png</file>
+    <file>id14.png</file>
+    <file>identity6.png</file>
+    <file>passport9.png</file>
+    <file>raw.png</file>
+  </qresource>
+</RCC>
