@@ -211,9 +211,9 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         #display ui for inputing client programs for mocap client and plugin client 
         if lisen:
             if self.clientDialog.exec_():
-                lisenPort = int(self.clientDialog.comboBox_lisenPort.itemText(0))
-                mocapClientIP = self.clientDialog.comboBox_mocapIP.itemText(0)
-                pluginClientIP = self.clientDialog.comboBox_pluginIP.itemText(0)
+                lisenPort = int(self.clientDialog.comboBox_lisenPort.itemText(self.clientDialog.comboBox_lisenPort.currentIndex()))
+                mocapClientIP = self.clientDialog.comboBox_mocapIP.itemText(self.clientDialog.comboBox_mocapIP.currentIndex())
+                pluginClientIP = self.clientDialog.comboBox_pluginIP.itemText(self.clientDialog.comboBox_pluginIP.currentIndex())
                 print "starting server"
                 self.thread.render(lisenPort,mocapClientIP,pluginClientIP)
                 self.statusBar().showMessage("Lisinging for clients", 0)
