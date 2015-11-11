@@ -178,6 +178,7 @@ class Server(QThread):
         self.wait()       
          
     def render(self,lisenPort,mocapclientIP,pluginClientIP):
+        print lisenPort,mocapclientIP,pluginClientIP
         self.exiting = False
         self.tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.tcpServer.setblocking(0)    
@@ -200,7 +201,11 @@ class Server(QThread):
         
         # Sockets to which we expect to write
         self.outputs = [ ]
-        self.readCliantIP = [ pluginClientIP ]
+
+        if pluginClientIP:
+            self.readCliantIP = [ pluginClientIP ]
+        else:
+            self.readCliantIP = [  ]
 
         self.start()
         
@@ -278,24 +283,23 @@ class Server(QThread):
                     print >>sys.stderr, 'new connection from', client_address
                     connection.setblocking(0)                
                     # sort cnections for imputs and output servers
-                    if client_address[0] in self.readCliantIP or client_address[0] in self.mocapSendClientIP:
-                        if client_address[0] in self.readCliantIP:
-                            
-                            # only alow one plugin connection at the mo
-                            # if already output remove befor adding new one
-                            #append new imput connection 
-                            self.outputs.append(connection)
-                            # ring buffer might be slow
-                            self.data_queues[connection] = deque(maxlen =500)#Queue.Queue(maxsize=1000)#LifoQueue
-                            self.pluginCommand[connection] = None
-                            self.receve_queues[connection] = (Queue.Queue(),self.packer_cmd,self.amount_expected_cmd)
-                            self.inputs.append(connection)
-                            
-                        if client_address[0] in self.mocapSendClientIP: 
-                            self.inputs.append(connection)
-                            self.outputs.append(connection)
-                            self.pluginCommand[connection] = None
-                            self.receve_queues[connection] = (Queue.Queue(),self.packer_data,self.amount_expected_mocap)
+                    if client_address[0] in self.readCliantIP:
+                        
+                        # only alow one plugin connection at the mo
+                        # if already output remove befor adding new one
+                        #append new imput connection 
+                        self.outputs.append(connection)
+                        # ring buffer might be slow
+                        self.data_queues[connection] = deque(maxlen =500)#Queue.Queue(maxsize=1000)#LifoQueue
+                        self.pluginCommand[connection] = None
+                        self.receve_queues[connection] = (Queue.Queue(),self.packer_cmd,self.amount_expected_cmd)
+                        self.inputs.append(connection)
+                        
+                    if client_address[0] in self.mocapSendClientIP: 
+                        self.inputs.append(connection)
+                        self.outputs.append(connection)
+                        self.pluginCommand[connection] = None
+                        self.receve_queues[connection] = (Queue.Queue(),self.packer_data,self.amount_expected_mocap)
                         
                     else:
                         raise "dont know this server",client_address
