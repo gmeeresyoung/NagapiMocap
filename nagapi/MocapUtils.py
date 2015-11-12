@@ -8,6 +8,7 @@ Created on 7 Oct 2015
 #
 # plugin commands
 CMD_NEW_FRAME = 1002
+CMD_SERVER_CLOSING = 5555
 # mocap commnds
 MOCAP_CLASSIFY_DATA = 2222
 MOCAP_RAW_DATA = 3333
