@@ -106,7 +106,10 @@ class Server(QThread):
         
         # Sockets to which we expect to write
         self.outputs = [ ]
-        self.readCliantIP = [ pluginClientIP ]
+        if pluginClientIP:
+            self.readCliantIP = [ pluginClientIP ]
+        else:
+            self.readCliantIP = [  ]
 
         self.start()
         
@@ -317,7 +320,6 @@ class Server(QThread):
                     if amount_expected == amount_received:
         
                         unpacked_data = packer.unpack_from(dataBuffer, 0)
-                        
                         ##
                         # get commads form connected clients, Identify it is a command using data lenth
                         #
@@ -362,16 +364,16 @@ class Server(QThread):
                                 
                                 # filtering the data
                                 if tag != MOCAP_ROGE_DATA:
-                                    continue 
-                                
-                                if self.filterDataFlag:
-                                    x,y,w,h = self.applyFiltering(tag, x, y, w, h)
-                                
-                                ##
-                                # emit point data to updat the UI draw  
-                                #
-                                self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
-                                          tag, x, y,w,h)                                       
+                                      
+                                    if self.filterDataFlag:
+                                        x,y,w,h = self.applyFiltering(tag, x, y, w, h)
+                                    
+                                    ##
+                                    # emit point data to updat the UI draw  
+                                    #
+                                   
+                                    self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
+                                              tag, x, y,w,h)                                       
                                 
                                 self.frameDataBuffer[dataIndexOffset] = tag
                                 self.frameDataBuffer[dataIndexOffset+1] = coltag
