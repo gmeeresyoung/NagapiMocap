@@ -36,7 +36,7 @@ class Server(QThread):
         # Give the connection a queue for data we want to send/ reseve
         self.data_queues = dict()
         self.receve_queues = dict()
-        self.pluginCommand = dict()
+        self.clientCommands = dict()
         
         # set up data streem for commands 
         self.packer_cmd = struct.Struct('I')
@@ -82,7 +82,41 @@ class Server(QThread):
             if re.search(fileName, f):
                 finc = finc + 1
         self.rocodingFileName = '%s%d.txt'%(fileName,finc)
+
+    def render(self,lisenPort,mocapclientIP,pluginClientIP):
+        self.exiting = False
+        self.tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.tcpServer.setblocking(0)    
+            
+        # Bind the socket to the port
+        server_address = ('', lisenPort)
+        print >>sys.stderr, 'starting up on %s port %s' % server_address
+        self.tcpServer.bind(server_address)
         
+        # Listen for incoming connections
+        self.tcpServer.listen(2)        
+
+        # wait for a connection for give time then close in none found
+        self.timeout = 60
+        
+        # Sockets from which we expect to read
+        self.inputs = [ self.tcpServer ]
+        self.mocapSendClientIP = [ mocapclientIP ]
+        
+        
+        # Sockets to which we expect to write
+        self.outputs = [ ]
+        self.readCliantIP = [ pluginClientIP ]
+
+        self.start()
+        
+    def closeServer(self):
+        self.commandFromServer = CMD_SERVER_CLOSING
+        self.exiting = True
+        self.tcpServer.close()              
+        self.exit()
+        self.emit(SIGNAL("stopingServer()"))
+       
     def buildFromData(self,data):
         
         tag = data['tag']
@@ -176,42 +210,6 @@ class Server(QThread):
         self.exiting = True
         self.tcpServer.close()
         self.wait()       
-         
-    def render(self,lisenPort,mocapclientIP,pluginClientIP):
-        print lisenPort,mocapclientIP,pluginClientIP
-        self.exiting = False
-        self.tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.tcpServer.setblocking(0)    
-            
-        # Bind the socket to the port
-        server_address = ('', lisenPort)
-        print >>sys.stderr, 'starting up on %s port %s' % server_address
-        self.tcpServer.bind(server_address)
-        
-        # Listen for incoming connections
-        self.tcpServer.listen(2)        
-
-        # wait for a connection for give time then close in none found
-        self.timeout = 60
-        
-        # Sockets from which we expect to read
-        self.inputs = [ self.tcpServer ]
-        self.mocapSendClientIP = [ mocapclientIP ]
-        
-        
-        # Sockets to which we expect to write
-        self.outputs = [ ]
-
-        if pluginClientIP:
-            self.readCliantIP = [ pluginClientIP ]
-        else:
-            self.readCliantIP = [  ]
-
-        self.start()
-        
-    def closeServer(self):
-        self.exiting = True
-        self.tcpServer.close()
             
     def updateSmartBox(self, smartBoxSize):
         self.smartFilterBoxSize = smartBoxSize
@@ -224,16 +222,16 @@ class Server(QThread):
         print tag,channel,filterType,self.filterBuffers[tag][channel]['filterType'] 
         self.filterBuffers[tag][channel]['filterType'] = filterType
 
-
     def updateLowPassFreq(self,tag,channel,newFreq):
         print tag,channel,newFreq,self.filterBuffers[tag][channel]['lowPassFreq']
         self.filterBuffers[tag][channel]['lowPassFreq'] = newFreq
 
-    
     def updateOutputChannel(self,tag,channel,on):
         print tag,channel,on,self.filterBuffers[tag]['activeChannels'][channel] 
         self.filterBuffers[tag]['activeChannels'][channel] = on
        
+    def closeMocapClient(self):
+        self.commandFromServer = CMD_SERVER_CLOSING
        
     def clasifyData(self,data):
         print "clasifyData"
@@ -258,7 +256,7 @@ class Server(QThread):
     
     def filterOff(self):
         self.filterDataFlag = False        
-        
+       
     def startRecording(self,curRecordFile):
         self.openRecording = open(curRecordFile, "w")
     
@@ -274,6 +272,8 @@ class Server(QThread):
                 # setting readable to [] is a hack to get the server to close down without an error 
                 readable = []
                 self.exiting = True
+                self.commandFromServer = CMD_SERVER_CLOSING
+                print "connection timeout"
             
             # Handle inputs
             for s in readable:        
@@ -283,24 +283,24 @@ class Server(QThread):
                     print >>sys.stderr, 'new connection from', client_address
                     connection.setblocking(0)                
                     # sort cnections for imputs and output servers
-                    if client_address[0] in self.readCliantIP:
-                        
-                        # only alow one plugin connection at the mo
-                        # if already output remove befor adding new one
-                        #append new imput connection 
-                        self.outputs.append(connection)
-                        # ring buffer might be slow
-                        self.data_queues[connection] = deque(maxlen =500)#Queue.Queue(maxsize=1000)#LifoQueue
-                        self.pluginCommand[connection] = None
-                        self.receve_queues[connection] = (Queue.Queue(),self.packer_cmd,self.amount_expected_cmd)
-                        self.inputs.append(connection)
-                        
-                    if client_address[0] in self.mocapSendClientIP: 
-                        self.inputs.append(connection)
-                        self.outputs.append(connection)
-                        self.pluginCommand[connection] = None
-                        self.receve_queues[connection] = (Queue.Queue(),self.packer_data,self.amount_expected_mocap)
-                        
+                    if client_address[0] in self.readCliantIP or client_address[0] in self.mocapSendClientIP:
+                        if client_address[0] in self.readCliantIP:
+                            
+                            # only alow one plugin connection at the mo
+                            # if already output remove befor adding new one
+                            #append new input connection 
+                            self.outputs.append(connection)
+                            # ring buffer might be slow
+                            self.data_queues[connection] = deque(maxlen =500)#Queue.Queue(maxsize=1000)#LifoQueue
+                            self.clientCommands[connection] = None
+                            self.receve_queues[connection] = (Queue.Queue(),self.packer_cmd,self.amount_expected_cmd)
+                            self.inputs.append(connection)
+                            
+                        if client_address[0] in self.mocapSendClientIP: 
+                            self.inputs.append(connection)
+                            self.outputs.append(connection)
+                            self.clientCommands[connection] = None
+                            self.receve_queues[connection] = (Queue.Queue(),self.packer_data,self.amount_expected_mocap)
                     else:
                         raise "dont know this server",client_address
                 else: 
@@ -319,29 +319,27 @@ class Server(QThread):
                         unpacked_data = packer.unpack_from(dataBuffer, 0)
                         
                         ##
-                        # get commad form plugin client
+                        # get commads form connected clients, Identify it is a command using data lenth
                         #
                         if amount_expected == self.amount_expected_cmd: 
                             for key in self.data_queues.keys():
-                                self.pluginCommand[s] = unpacked_data[0]
+                                self.clientCommands[s] = unpacked_data[0]
                         ##
                         # get data from mocap client 
                         #                              
                         elif   amount_expected == self.amount_expected_mocap:
-                            
-                            '''
-                            if self.openRecording:
-                                self.openRecording.write(str(unpacked_data) + "\n")
-                            '''
                             ##
-                            # look for user input commands 
+                            # look for user input commands from server
                             #
                             if self.commandFromServer:
-                                self.pluginCommand[s] = self.commandFromServer
+                                self.clientCommands[s] = self.commandFromServer
                                 # reset servercommand
                                 self.commandFromServer = None
-                            
+                            ##
+                            # loop throught point on frame
+                            #
                             for index in xrange(0,self.maxPoints):
+                                
                                 dataIndexOffset = 0
                                 if index != 0:
                                     dataIndexOffset = index * self.pointDataSize
@@ -349,7 +347,7 @@ class Server(QThread):
                                 tag = unpacked_data[dataIndexOffset]
                                 coltag = unpacked_data[dataIndexOffset+1]
                                 ##
-                                #I have fliped the data this need to be controled by the ui 
+                                #I have fliped the data to work with the UI portrat layout. this need to be controled by the ui 
                                 #
                                 y = unpacked_data[dataIndexOffset+2]
                                 x = unpacked_data[dataIndexOffset+3] 
@@ -362,57 +360,19 @@ class Server(QThread):
                                     #self._clasfyRegens.assingTags(tag,coltag,x,y,w,h)
                                     tag = self._clasfyRegens.regenClasify(tag,coltag,x,y)
                                 
+                                # filtering the data
                                 if tag != MOCAP_ROGE_DATA:
-                                    if self.filterDataFlag:
-                                        
-                                        if self.filterBuffers[tag]['activeChannels']['x']:
-                                            
-                                            self.filterBuffers[tag]['x']['buffer'].append(x)
-                                            
-                                            if self.filterBuffers[tag]['x']['filterType'] ==  Server.lowPassFilter:
-                                                x = self.filterBuffers[tag]['x']['buffer'].filterButterworth()  
-                                            elif self.filterBuffers[tag]['x']['filterType'] ==  Server.gouseanFilter:
-                                                x = self.filterBuffers[tag]['x']['buffer'].filterGauss() 
-                                            else:
-                                                # no filter
-                                                pass
-
-                                        if self.filterBuffers[tag]['activeChannels']['y']:
-                                            self.filterBuffers[tag]['y']['buffer'].append(y)
-                                            if self.filterBuffers[tag]['y']['filterType'] ==  Server.lowPassFilter:
-                                                y = self.filterBuffers[tag]['y']['buffer'].filterButterworth()  
-                                            elif self.filterBuffers[tag]['y']['filterType'] ==  Server.gouseanFilter:
-                                                y = self.filterBuffers[tag]['y']['buffer'].filterGauss() 
-                                            else:
-                                                # no filter
-                                                pass
-                                            
-                                        if self.filterBuffers[tag]['activeChannels']['w']:
-                                            self.filterBuffers[tag]['w']['buffer'].append(w)
-                                            if self.filterBuffers[tag]['w']['filterType'] ==  Server.lowPassFilter:
-                                                w = self.filterBuffers[tag]['w']['buffer'].filterButterworth()  
-                                            
-                                            elif self.filterBuffers[tag]['w']['filterType'] ==  Server.gouseanFilter:
-                                                w = self.filterBuffers[tag]['w']['buffer'].filterGauss()                                        
-                                            else:
-                                                # no filter
-                                                pass
-                                            
-                                        if self.filterBuffers[tag]['activeChannels']['h']:
-                                            self.filterBuffers[tag]['h']['buffer'].append(h)
-                                            if self.filterBuffers[tag]['h']['filterType'] ==  Server.lowPassFilter:
-                                                h = self.filterBuffers[tag]['h']['buffer'].filterButterworth()  
-                                            elif self.filterBuffers[tag]['h']['filterType'] ==  Server.gouseanFilter:
-                                                h = self.filterBuffers[tag]['h']['buffer'].filterGauss()                                             
-                                            else:
-                                                # no filter
-                                                pass
-                                        #x = self.filterBuffers[tag]['bx'].filterButterworth()       
-                                        #y = self.filterBuffers[tag]['by'].filterButterworth() 
-                                    
-                                    self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
-                                              tag, x, y,w,h)                                       
-                                    
+                                    continue 
+                                
+                                if self.filterDataFlag:
+                                    x,y,w,h = self.applyFiltering(tag, x, y, w, h)
+                                
+                                ##
+                                # emit point data to updat the UI draw  
+                                #
+                                self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
+                                          tag, x, y,w,h)                                       
+                                
                                 self.frameDataBuffer[dataIndexOffset] = tag
                                 self.frameDataBuffer[dataIndexOffset+1] = coltag
                                 self.frameDataBuffer[dataIndexOffset+2] = x
@@ -424,10 +384,6 @@ class Server(QThread):
                             if self.setClasifydata:
                                 self._clasfyRegens.updateBoxesForNextFrame()
                             
-                            '''       
-                            if self.filterDataFlag:
-                                unpacked_data = self.frameDataBuffer
-                            '''
                             
                             self.emit(SIGNAL("frameEnd()"))                            
                             
@@ -447,7 +403,7 @@ class Server(QThread):
             # Handle outputs
             for s in writable:
     
-                if self.pluginCommand[s] == CMD_NEW_FRAME:
+                if self.clientCommands[s] == CMD_NEW_FRAME:
                     try:
             
                         next_msg = self.data_queues[s].pop()
@@ -457,9 +413,9 @@ class Server(QThread):
                         print >>sys.stderr, 'output queue for', s.getpeername(), 'is empty'
                     else:
                         s.send(next_msg)
-                        self.pluginCommand[s] =  None
+                        self.clientCommands[s] =  None
             
-                elif  self.pluginCommand[s] == MOCAP_CLASSIFY_DATA:
+                elif  self.clientCommands[s] == MOCAP_CLASSIFY_DATA:
                     pass
 
                     print "sending clasify comand to mocap cliant"
@@ -467,17 +423,22 @@ class Server(QThread):
                     self.packer_cmd.pack_into(self.cmdBuffer, 0, MOCAP_CLASSIFY_DATA) 
                     s.send(self.cmdBuffer)
                     '''
-                    self.pluginCommand[s] = None
-
-                
-                elif self.pluginCommand[s] == MOCAP_RAW_DATA:
+                    self.clientCommands[s] = None
+                    
+                elif self.clientCommands[s] == MOCAP_RAW_DATA:
                     print "sending raw data comand to cliant"
                     self.packer_cmd.pack_into(self.cmdBuffer, 0, MOCAP_RAW_DATA) 
                     s.send(self.cmdBuffer)
-                    self.pluginCommand[s] = None
+                    self.clientCommands[s] = None
+                
+                elif self.clientCommands[s] == CMD_SERVER_CLOSING:
+                    print "sending raw data comand to cliant"
+                    self.packer_cmd.pack_into(self.cmdBuffer, 0, CMD_SERVER_CLOSING) 
+                    s.send(self.cmdBuffer)
+                    self.clientCommands[s] = None
                 else:
                     # no commands to exicutep
-                    self.pluginCommand[s] = None            
+                    self.clientCommands[s] = None            
             
             # Handle "exceptional conditions"
             for s in exceptional:
@@ -493,12 +454,56 @@ class Server(QThread):
                 del self.data_queues[s]
                 del self.receve_queues[s]
         
-        
-        self.tcpServer.close()                
-        self.exit()
-        self.emit(SIGNAL("stopingServer()"))
-        
-        
+        #self.closeServer()
+        #self.tcpServer.close()                
+        #self.exit()
+        #self.emit(SIGNAL("stopingServer()"))
+
+    def applyFiltering(self,tag,x,y,w,h):
+        if self.filterBuffers[tag]['activeChannels']['x']:
+            
+            self.filterBuffers[tag]['x']['buffer'].append(x)
+            
+            if self.filterBuffers[tag]['x']['filterType'] ==  Server.lowPassFilter:
+                x = self.filterBuffers[tag]['x']['buffer'].filterButterworth()  
+            elif self.filterBuffers[tag]['x']['filterType'] ==  Server.gouseanFilter:
+                x = self.filterBuffers[tag]['x']['buffer'].filterGauss() 
+            else:
+                # no filter
+                pass
+
+        if self.filterBuffers[tag]['activeChannels']['y']:
+            self.filterBuffers[tag]['y']['buffer'].append(y)
+            if self.filterBuffers[tag]['y']['filterType'] ==  Server.lowPassFilter:
+                y = self.filterBuffers[tag]['y']['buffer'].filterButterworth()  
+            elif self.filterBuffers[tag]['y']['filterType'] ==  Server.gouseanFilter:
+                y = self.filterBuffers[tag]['y']['buffer'].filterGauss() 
+            else:
+                # no filter
+                pass
+            
+        if self.filterBuffers[tag]['activeChannels']['w']:
+            self.filterBuffers[tag]['w']['buffer'].append(w)
+            if self.filterBuffers[tag]['w']['filterType'] ==  Server.lowPassFilter:
+                w = self.filterBuffers[tag]['w']['buffer'].filterButterworth()  
+            
+            elif self.filterBuffers[tag]['w']['filterType'] ==  Server.gouseanFilter:
+                w = self.filterBuffers[tag]['w']['buffer'].filterGauss()                                        
+            else:
+                # no filter
+                pass
+            
+        if self.filterBuffers[tag]['activeChannels']['h']:
+            self.filterBuffers[tag]['h']['buffer'].append(h)
+            if self.filterBuffers[tag]['h']['filterType'] ==  Server.lowPassFilter:
+                h = self.filterBuffers[tag]['h']['buffer'].filterButterworth()  
+            elif self.filterBuffers[tag]['h']['filterType'] ==  Server.gouseanFilter:
+                h = self.filterBuffers[tag]['h']['buffer'].filterGauss()                                             
+            else:
+                # no filter
+                pass
+            
+        return (x,y,w,h)
         
 if __name__ == '__main__':
     pass

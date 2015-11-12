@@ -50,6 +50,8 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         self.curFile = ''
         self.curRecordFile = ''
         self.recordingModifyed = False
+        
+        self.readSettings()
 
     def connectActions(self):
         
@@ -217,7 +219,10 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
                 print "starting server"
                 self.thread.render(lisenPort,mocapClientIP,pluginClientIP)
                 self.statusBar().showMessage("Lisinging for clients", 0)
+            else:
+                self.actionListenForConnections.setChecked(False)
         else:
+            
             self.thread.closeServer()
     
     def stopingServer(self):
@@ -439,10 +444,61 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         return True
 
     def writeSettings(self):
-        settings = QtCore.QSettings("Trolltech", "Nagapi Mocap Example")
-        settings.setValue("pos", self.pos())
-        settings.setValue("size", self.size())
+        print "writ settings"
+        settings = QtCore.QSettings("Nagapi", "NagapiMocap")
+        settings.beginGroup("ClientDiolog")
         
+        settings.beginWriteArray("mocapIPs")
+        settings.setValue("currentIndex", self.clientDialog.comboBox_mocapIP.currentIndex())
+        size = self.clientDialog.comboBox_mocapIP.count()
+        settings.setValue("size",size)
+        for index in range(size):
+            settings.setArrayIndex(index);
+            settings.setValue("text", self.clientDialog.comboBox_mocapIP.itemText(index))
+        settings.endArray()
+        
+        settings.beginWriteArray("pluginIPs")
+        settings.setValue("currentIndex", self.clientDialog.comboBox_pluginIP.currentIndex())
+        size =self.clientDialog.comboBox_pluginIP.count()
+        settings.setValue("size",size)
+        for index in range(size):
+            settings.setArrayIndex(index);
+            settings.setValue("text", self.clientDialog.comboBox_pluginIP.itemText(index))
+        settings.endArray()
+        
+        settings.endGroup()
+        
+    def readSettings(self):
+        settings =  QtCore.QSettings("Nagapi", "NagapiMocap")
+        settings.beginGroup("ClientDiolog")
+        
+        for i in settings.allKeys(): print i,settings.value(i).toString()
+        
+        self.clientDialog.comboBox_mocapIP.clear()
+        size = settings.beginReadArray("mocapIPs")
+        currentIndex = settings.value("currentIndex").toString()
+        for i in range(size):
+            settings.setArrayIndex(i)
+            self.clientDialog.comboBox_mocapIP.addItem(settings.value("text").toString())
+        
+        settings.endArray()
+
+        
+        currentIndex = int(currentIndex) if currentIndex  else 0
+        self.clientDialog.comboBox_mocapIP.setCurrentIndex(currentIndex)
+        
+        self.clientDialog.comboBox_pluginIP.clear()
+        size = settings.beginReadArray("pluginIPs")
+        currentIndex = settings.value("currentIndex").toString()
+        for i in range(size):
+            settings.setArrayIndex(i)
+            self.clientDialog.comboBox_pluginIP.addItem(settings.value("text").toString())
+        
+        settings.endArray()
+
+        currentIndex = int(currentIndex) if currentIndex else 0
+        self.clientDialog.comboBox_pluginIP.setCurrentIndex(currentIndex)
+        settings.endGroup()        
 
     
 if __name__ == '__main__':
