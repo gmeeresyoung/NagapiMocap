@@ -31,6 +31,8 @@ class Server(QThread):
     def __init__(self, parent = None):
     
         QThread.__init__(self, parent)
+        
+        self.tcpServer = None 
         self.exiting = False
         self.commandFromServer=None
         # Give the connection a queue for data we want to send/ reseve
@@ -101,8 +103,11 @@ class Server(QThread):
         
         # Sockets from which we expect to read
         self.inputs = [ self.tcpServer ]
-        self.mocapSendClientIP = [ mocapclientIP ]
         
+        if mocapclientIP:
+            self.mocapSendClientIP = [ mocapclientIP ]
+        else:
+            self.mocapSendClientIP = [  ]                
         
         # Sockets to which we expect to write
         self.outputs = [ ]
@@ -116,7 +121,8 @@ class Server(QThread):
     def closeServer(self):
         self.commandFromServer = CMD_SERVER_CLOSING
         self.exiting = True
-        self.tcpServer.close()              
+        if self.tcpServe:
+            self.tcpServer.close()              
         self.exit()
         self.emit(SIGNAL("stopingServer()"))
        
@@ -211,7 +217,8 @@ class Server(QThread):
     def __del__(self):
         print "deleating thred"
         self.exiting = True
-        self.tcpServer.close()
+        if self.tcpServer:
+            self.tcpServer.close()
         self.wait()       
             
     def updateSmartBox(self, smartBoxSize):

@@ -6,114 +6,134 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>189</height>
+    <width>406</width>
+    <height>226</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>Motion capture client IP</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QComboBox" name="comboBox_mocapIP">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-          <item>
-           <property name="text">
-            <string>localHost</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>192.168.0.17</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>192.168.0.16</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="title">
-        <string>PlugIn client IP</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
+      <widget class="QRadioButton" name="radioButton_local">
+       <property name="text">
+        <string>local Client</string>
        </property>
        <property name="checked">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QComboBox" name="comboBox_pluginIP">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-          <item>
-           <property name="text">
-            <string/>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>192.168.0.10</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
+      <widget class="QRadioButton" name="radioButton_remote">
+       <property name="text">
+        <string>Remote Client</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Motion capture client IP</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QComboBox" name="comboBox_mocapIP">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <item>
          <property name="text">
-          <string>Lisen port</string>
+          <string>localHost</string>
          </property>
-        </widget>
-       </item>
+        </item>
+        <item>
+         <property name="text">
+          <string>192.168.0.17</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>192.168.0.16</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>PlugIn client IP</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QComboBox" name="comboBox_pluginIP">
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <item>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>192.168.0.10</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Lisen port</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_lisenPort">
+       <property name="inputMethodHints">
+        <set>Qt::ImhDigitsOnly</set>
+       </property>
        <item>
-        <widget class="QComboBox" name="comboBox_lisenPort">
-         <property name="inputMethodHints">
-          <set>Qt::ImhDigitsOnly</set>
-         </property>
-         <item>
-          <property name="text">
-           <string>10000</string>
-          </property>
-         </item>
-        </widget>
+        <property name="text">
+         <string>10000</string>
+        </property>
        </item>
-      </layout>
+      </widget>
      </item>
     </layout>
    </item>
@@ -138,12 +158,12 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>209</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
-     <y>274</y>
+     <y>211</y>
     </hint>
    </hints>
   </connection>
@@ -154,12 +174,28 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>209</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
-     <y>274</y>
+     <y>211</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_remote</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>223</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>163</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
