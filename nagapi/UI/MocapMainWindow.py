@@ -52,7 +52,11 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         self.recordingModifyed = False
         
         self.readSettings()
-
+        
+        #rf = open('C:\\Users\\gregmeeresyoung\\git\\NagapiMocap\\nagapi\\mocapScenes\\newTestrecord.raw','r')
+        #AsciiFile(rf)
+        #rf.close()
+    
     def connectActions(self):
         
         self.connect(self.thread, QtCore.SIGNAL("subFrame(int, long, long, long, long)"), self.updateSubframe)
@@ -317,7 +321,7 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         return False
 
     def saveRecordingAs(self):
-        fileName = QtGui.QFileDialog.getSaveFileName(self, "Save Mocap", "", "Mocap Files (*.raw *.mocap *.asci)")
+        fileName = QtGui.QFileDialog.getSaveFileName(self, "Save Mocap", "", "Mocap Files (*.raw *.mocap *.ma)")
         if fileName:
             return self.saveRecordingFile(fileName)
         return False
@@ -415,16 +419,15 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             QtGui.QMessageBox.warning(self, "Nagapi Mocap",
                     "Cannot write file %s:\n%s." % (self.curRecordFile, tmpfile.errorString()))        
         
-        print "dsfsdf"+ext+"sdfdsfdsfds"
         if ext == '.raw': 
-            outf << tmpfile.readAll()
+            outf << tmpfile.read.readAll()
         if ext == '.mocap':
             print "convert to mocap format filterd and clasifyed"
             outf << tmpfile.readAll()
-        if ext == '.asci':
-            print "convert ot maya asci format"
-            outf << tmpfile.readAll()
-        
+        if ext == '.ma':
+            print "convert ot maya ascii format"
+            outf << str(AsciiFile(tmpfile))
+           
         tmpfile.close()
         self.recordingModifyed = False
         self.statusBar().showMessage("Mocap saved", 2000)

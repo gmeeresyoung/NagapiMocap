@@ -46,8 +46,8 @@ class Server(QThread):
         self.amount_expected_cmd = self.packer_cmd.size
         # setup data streem for mocp data
         self.filterBufferSize = 100
-        self.maxPoints = 20
-        self.pointDataSize = 6        
+        self.maxPoints = MAX_NUM_POINTS
+        self.pointDataSize = POINT_DATA_SIZE        
         self.packer_data = struct.Struct(self.buildPacker(self.maxPoints,self.pointDataSize))
         self.sendDataBuffer = ctypes.create_string_buffer(self.packer_data.size)
         self.amount_expected_mocap = self.packer_data.size

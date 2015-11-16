@@ -18,13 +18,108 @@ MOCAP_ROGE_DATA = 9999
 # server commands
 SERVER_RECORD_DATA = 4444
 
+#DATA
+MAX_NUM_POINTS = 20
+POINT_DATA_SIZE = 6
 
 class AsciiFile( object ):
     
-    def __init__(self):
-        pass
+    def __init__(self,rawFile):
+        maxPoints = MAX_NUM_POINTS
+        pointDataSize = POINT_DATA_SIZE
+        
+        locNameDict = {}
+        
+        numOfPointsX = 0
+        numOfPointsY= 0
+        
+        numOfKeysX= 0
+        numOfKeysY= 0
+        
+        frameNumberAndPosX = ''
+        frameNumberAndPosY = ''
+        
+        frame = 0
+        #for line in rawFile.readlines():
+        while not rawFile.atEnd():
+            line = file.readLine()
+            #print line
+            line = line.replace("[",'')
+            line = line.replace("]",'')
+            unpacked_data = line.split(', ')
+            
+            for index in xrange(0,maxPoints):
+                
+                dataIndexOffset = 0
+                if index != 0:
+                    dataIndexOffset = index * pointDataSize
 
-    
+                tag = int(unpacked_data[dataIndexOffset])
+                
+                y = unpacked_data[dataIndexOffset+2]
+                x = unpacked_data[dataIndexOffset+3]
+                h = unpacked_data[dataIndexOffset+4] 
+                w = unpacked_data[dataIndexOffset+5] 
+                
+                if int(tag) != MOCAP_ROGE_DATA:
+                    
+                    #print tag, x, y, w, h,frame
+                    frameStr = str(frame)
+                    if locNameDict.has_key(tag):
+                        locNameDict[tag]['numOfPointsX'] = locNameDict[tag]['numOfPointsX'] + 1
+                        locNameDict[tag]['numOfPointsY'] = locNameDict[tag]['numOfPointsY'] + 1
+                        locNameDict[tag]['frameNumberAndPosX'] = locNameDict[tag]['frameNumberAndPosX'] + frameStr + ' ' + x + ' '
+                        locNameDict[tag]['frameNumberAndPosY'] = locNameDict[tag]['frameNumberAndPosY'] + frameStr + ' ' + y + ' '
+                        locNameDict[tag]['frameNumberAndScaleX'] = locNameDict[tag]['frameNumberAndScaleX'] + frameStr + ' ' + w + ' '
+                        locNameDict[tag]['frameNumberAndScaleY'] = locNameDict[tag]['frameNumberAndScaleY'] + frameStr + ' ' + h + ' '
+                    else:
+                        locNameDict[tag] = dict(numOfPointsX=numOfPointsX,
+                                                numOfPointsY=numOfPointsY,
+                                                frameNumberAndPosX=frameStr + ' ' + x + ' ',
+                                                frameNumberAndPosY=frameStr + ' ' + y + ' ',
+                                                frameNumberAndScaleX=frameStr + ' ' + w + ' ',
+                                                frameNumberAndScaleY=frameStr + ' ' + h + ' ' ) 
+                         
+            frame = frame + 1  
+        
+        asciifile = ''
+        header =self.header()
+        asciifile = asciifile + header
+        for tag in locNameDict.keys():
+            locName = "mocaploc_" + str(tag)
+            loc = self.creatLocator().substitute(locName=locName)     
+            asciifile = asciifile + loc
+            
+            numOfPointsX = locNameDict[tag]['numOfPointsX']
+            numOfPointsY = locNameDict[tag]['numOfPointsY']
+            numOfKeysX = numOfPointsX - 1
+            numOfKeysY = numOfPointsY - 1
+            frameNumberAndPosX = locNameDict[tag]['frameNumberAndPosX']
+            frameNumberAndPosY = locNameDict[tag]['frameNumberAndPosY']
+            frameNumberAndScaleX = locNameDict[tag]['frameNumberAndScaleX']
+            frameNumberAndScaleY = locNameDict[tag]['frameNumberAndScaleY']
+            animCurve = self.creatLocatorAnimCurve().substitute(locName=locName,
+                                               numOfPointsX=numOfPointsX,
+                                               numOfKeysX=numOfKeysX,
+                                               frameNumberAndPosX=frameNumberAndPosX,
+                                               frameNumberAndScaleX=frameNumberAndScaleX,
+                                               numOfPointsY=numOfPointsY,
+                                               numOfKeysY=numOfKeysY,
+                                               frameNumberAndPosY=frameNumberAndPosY,
+                                               frameNumberAndScaleY=frameNumberAndScaleY)
+            asciifile = asciifile + animCurve
+            
+            conectAnim = self.connectAnimCurveToLocator().substitute(locName=locName)
+            asciifile = asciifile + conectAnim
+            
+        footer = self.footer()
+        asciifile = asciifile + footer
+        #print asciifile
+        self.__saveFileStr = asciifile
+        
+    def __str__(self):
+        return self.__saveFileStr
+        
     def header(self):
         headerStr = '''
 //Maya ASCII 2015 scene
@@ -37,92 +132,11 @@ fileInfo "application" "maya";
 fileInfo "product" "Maya 2015";
 fileInfo "version" "2015";
 fileInfo "cutIdentifier" "201402282131-909040";
-fileInfo "osv" "Microsoft Windows 7 Business Edition, 64-bit Windows 7 Service Pack 1 (Build 7601)\n";'''
+fileInfo "osv" "Microsoft Windows 7 Business Edition, 64-bit Windows 7 Service Pack 1 (Build 7601)";\n'''
+        return headerStr
 
     def footer(self):
-        footer = '''// End of singleLocWithAnim.ma\n'''
-
-    def creatLocator(self):
-        s=Template('''
-createNode transform -n "${locName}";
-createNode locator -n "${locName}Shape" -p "${locName}";
-    setAttr -k off ".v";\n''')
-        return s
-    
-    def creatLocatorAnimCurve(self,locName):
-        s=Template('''
-createNode animCurveTL -n "${locName}_translateX";
-    setAttr ".tan" 18;
-    setAttr ".wgt" no;
-    setAttr -s ${numOfPointsX} ".ktv[0:${numOfKeysX}]"  &{frameNumberAndPosX};
-createNode animCurveTL -n "${locName}_translateX";
-    setAttr ".tan" 18;
-    setAttr ".wgt" no;
-    setAttr -s ${numOfPointsY} ".ktv[0:${numOfKeysY}]"  &{frameNumberAndPosY};
-createNode animCurveTL -n "${locName}_translateX";
-    setAttr ".tan" 18;
-    setAttr ".wgt" no;
-    setAttr -s ${numOfPointsZ} ".ktv[0:${numOfKeysZ}]"  &{frameNumberAndPosZ};''')
-        return s
-        
-    def connectAnimCurveToLocator(self):
-        s=Template('''
-connectAttr "&{locName}_translateX.o" "&{locName}.tx";
-connectAttr "&{locName}_translateY.o" "&{locName}.ty";
-connectAttr "&{locName}_translateZ.o" "&{locName}.tz";\n''')
-        return s
-    
-    
-'''
-//Maya ASCII 2015 scene
-//Name: singleLocWithAnim.ma
-//Last modified: Mon, Nov 16, 2015 10:23:55 AM
-//Codeset: 1252
-requires maya "2015";
-currentUnit -l centimeter -a degree -t film;
-fileInfo "application" "maya";
-fileInfo "product" "Maya 2015";
-fileInfo "version" "2015";
-fileInfo "cutIdentifier" "201402282131-909040";
-fileInfo "osv" "Microsoft Windows 7 Business Edition, 64-bit Windows 7 Service Pack 1 (Build 7601)\n";
-
-
-
-createNode transform -n "singleLocWithAnim_locator1";
-createNode locator -n "singleLocWithAnim_locator1Shape" -p "singleLocWithAnim_locator1";
-    setAttr -k off ".v";
-createNode transform -n "locator1";
-createNode locator -n "locatorShape1" -p "locator1";
-    setAttr -k off ".v";
-createNode animCurveTL -n "singleLocWithAnim_locator1_translateX";
-    setAttr ".tan" 18;
-    setAttr ".wgt" no;
-    setAttr -s 4 ".ktv[0:3]"  1 0 2 0 3 4.1385087966918945 4 2.3590928557227313;
-createNode animCurveTL -n "singleLocWithAnim_locator1_translateY";
-    setAttr ".tan" 18;
-    setAttr ".wgt" no;
-    setAttr -s 4 ".ktv[0:3]"  1 0 2 6.3018579483032227 3 14.74535083770752
-         4 16.605308624234183;
-createNode animCurveTL -n "singleLocWithAnim_locator1_translateZ";
-    setAttr ".tan" 18;
-    setAttr ".wgt" no;
-    setAttr -s 4 ".ktv[0:3]"  1 0 2 0 3 -2.504094123840332 4 2.1347544772986282;
-createNode animCurveTL -n "locator1_translateX";
-    setAttr ".tan" 18;
-    setAttr ".wgt" no;
-    setAttr -s 7 ".ktv[0:6]"  1 6.6998325815324193 2 30.231028960496985
-         3 1.5523515048082857 4 1.1674736695450747 5 7.858830578224584 6 16.109259216797682
-         7 -14.486480337679723;
-createNode animCurveTL -n "locator1_translateY";
-    setAttr ".tan" 18;
-    setAttr ".wgt" no;
-    setAttr -s 7 ".ktv[0:6]"  1 0 2 36.222388672868554 3 33.900538497918781
-         4 18.863794507813573 5 15.878558568607282 6 21.959594741070752 7 36.332952966903527;
-createNode animCurveTL -n "locator1_translateZ";
-    setAttr ".tan" 18;
-    setAttr ".wgt" no;
-    setAttr -s 7 ".ktv[0:6]"  1 0 2 -32.557221237161087 3 -2.1395848638321979
-         4 9.507122152304845 5 5.0515695662945177 6 -7.7532752851278417 7 12.077480493516617;
+        footer = '''
 select -ne :time1;
     setAttr ".o" 1;
     setAttr ".unw" 1;
@@ -150,14 +164,42 @@ select -ne :hardwareRenderingGlobals;
          0 0 0 0 ;
 select -ne :defaultHardwareRenderGlobals;
     setAttr ".res" -type "string" "ntsc_4d 646 485 1.333";
-connectAttr "singleLocWithAnim_locator1_translateX.o" "singleLocWithAnim_locator1.tx"
-        ;
-connectAttr "singleLocWithAnim_locator1_translateY.o" "singleLocWithAnim_locator1.ty"
-        ;
-connectAttr "singleLocWithAnim_locator1_translateZ.o" "singleLocWithAnim_locator1.tz"
-        ;
-connectAttr "locator1_translateX.o" "locator1.tx";
-connectAttr "locator1_translateY.o" "locator1.ty";
-connectAttr "locator1_translateZ.o" "locator1.tz";
-// End of singleLocWithAnim.ma
-'''
+// End of singleLocWithAnim.ma\n'''
+        return footer
+
+    def creatLocator(self):
+        s=Template('''
+createNode transform -n "${locName}";
+createNode locator -n "${locName}Shape" -p "${locName}";
+    setAttr -k off ".v";\n''')
+        return s
+    
+    def creatLocatorAnimCurve(self):
+        s=Template('''
+createNode animCurveTL -n "${locName}_translateX";
+    setAttr ".tan" 18;
+    setAttr ".wgt" no;
+    setAttr -s ${numOfPointsX} ".ktv[0:${numOfKeysX}]"  ${frameNumberAndPosX};
+createNode animCurveTL -n "${locName}_translateY";
+    setAttr ".tan" 18;
+    setAttr ".wgt" no;
+    setAttr -s ${numOfPointsY} ".ktv[0:${numOfKeysY}]"  ${frameNumberAndPosY};
+createNode animCurveTL -n "${locName}_scaleX";
+    setAttr ".tan" 18;
+    setAttr ".wgt" no;
+    setAttr -s ${numOfPointsX} ".ktv[0:${numOfKeysX}]"  ${frameNumberAndScaleX};
+createNode animCurveTL -n "${locName}_scaleY";
+    setAttr ".tan" 18;
+    setAttr ".wgt" no;
+    setAttr -s ${numOfPointsY} ".ktv[0:${numOfKeysY}]"  ${frameNumberAndScaleY};\n''')
+        return s
+        
+    def connectAnimCurveToLocator(self):
+        s=Template('''
+connectAttr "${locName}_translateX.o" "${locName}.tx";
+connectAttr "${locName}_translateY.o" "${locName}.ty";
+connectAttr "${locName}_scaleX.o" "${locName}.sx";
+connectAttr "${locName}_scaleY.o" "${locName}.sy";\n''')
+        return s
+    
+    
