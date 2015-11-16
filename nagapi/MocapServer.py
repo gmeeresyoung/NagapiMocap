@@ -121,7 +121,7 @@ class Server(QThread):
     def closeServer(self):
         self.commandFromServer = CMD_SERVER_CLOSING
         self.exiting = True
-        if self.tcpServe:
+        if self.tcpServer:
             self.tcpServer.close()              
         self.exit()
         self.emit(SIGNAL("stopingServer()"))
