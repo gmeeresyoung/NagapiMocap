@@ -42,7 +42,7 @@ class AsciiFile( object ):
         frame = 0
         #for line in rawFile.readlines():
         while not rawFile.atEnd():
-            line = file.readLine()
+            line = str(rawFile.readLine())
             #print line
             line = line.replace("[",'')
             line = line.replace("]",'')
