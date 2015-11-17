@@ -220,7 +220,7 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         #display ui for inputing client programs for mocap client and plugin client 
         if lisen:
             if self.clientDialog.exec_():
-                
+                             
                 if self.clientDialog.radioButton_remote.isChecked():
                     
                     self.thread = Server()
@@ -235,7 +235,7 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
                     self.thread.render(lisenPort,mocapClientIP,pluginClientIP)
                     self.statusBar().showMessage("Lisinging for clients", 0)
                 
-                elif self.clientDialog.radioButton_remote.isChecked():
+                elif self.clientDialog.radioButton_local.isChecked():
                     rawTempFile = self.getTempFile()
                     self.thread = LocalClient(rawTempFile)
                     for clasifyData in self.graphicsView.getData().values():

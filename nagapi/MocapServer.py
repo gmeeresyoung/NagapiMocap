@@ -297,7 +297,6 @@ class LocalPixey( MocapTread ):
         self.start()
 
     def closeThred(self):
-        self._tmpfile.close()
         self.exiting = True            
         #self.exit()
         self.wait()
@@ -321,10 +320,12 @@ class LocalPixey( MocapTread ):
                     cmd = CMD_PASS if index < ( numOfPointForFrame -1 ) else CMD_NEW_FRAME
                     tag = index#blocks[index].signature
                     coltag = self.blocks[index].signature
-                    x = self.blocks[index].x
-                    y = self.blocks[index].y
-                    w = self.blocks[index].width
-                    h = self.blocks[index].height            
+                    
+                    # flip for ui
+                    y = self.blocks[index].x
+                    x = self.blocks[index].y
+                    h = self.blocks[index].width
+                    w = self.blocks[index].height            
 
                     if self.setClasifydata:
                         # setup nural pos tages done once to enable consistant traking
