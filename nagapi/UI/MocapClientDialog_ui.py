@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\gregmeeresyoung\workspace\NagapifaceMocap\nagapi\designer\MocapClientDialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\gregmeeresyoung\git\NagapiMocap\nagapi\designer\MocapClientDialog.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -34,6 +34,9 @@ class Ui_Dialog(object):
         self.radioButton_local.setChecked(True)
         self.radioButton_local.setObjectName(_fromUtf8("radioButton_local"))
         self.horizontalLayout_2.addWidget(self.radioButton_local)
+        self.radioButton_usbCam = QtGui.QRadioButton(Dialog)
+        self.radioButton_usbCam.setObjectName(_fromUtf8("radioButton_usbCam"))
+        self.horizontalLayout_2.addWidget(self.radioButton_usbCam)
         self.radioButton_remote = QtGui.QRadioButton(Dialog)
         self.radioButton_remote.setObjectName(_fromUtf8("radioButton_remote"))
         self.horizontalLayout_2.addWidget(self.radioButton_remote)
@@ -92,7 +95,8 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog", None))
-        self.radioButton_local.setText(_translate("Dialog", "local Client", None))
+        self.radioButton_local.setText(_translate("Dialog", "local File", None))
+        self.radioButton_usbCam.setText(_translate("Dialog", "USB Camera", None))
         self.radioButton_remote.setText(_translate("Dialog", "Remote Client", None))
         self.groupBox.setTitle(_translate("Dialog", "Motion capture client IP", None))
         self.comboBox_mocapIP.setItemText(0, _translate("Dialog", "localHost", None))

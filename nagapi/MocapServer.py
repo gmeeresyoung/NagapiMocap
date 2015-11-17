@@ -10,29 +10,40 @@ import Queue
 from collections import deque
 import ctypes
 import struct
+import time
 from pprint import pprint
-from PyQt4.QtCore import QThread,SIGNAL
-from PyQt4.QtGui import QMessageBox
+from PyQt4.QtCore import QThread,SIGNAL,QFile
+from PyQt4.QtGui import QMessageBox,QFileDialog
 
 from MocapFilters import CircularBuffer
 from MocapUtils import *
 import MocapClasify
+
+import ctypes
+from ctypes import c_uint,Structure
+import struct
 
 from nagapi import FpsClock
 ###
 # Initalize fps clock
 fpsclock = FpsClock(10)
 
-
-class Server(QThread):
-
+class Blocks (Structure):
+    _fields_ = [ ("type", c_uint),
+                 ("signature", c_uint),
+                 ("x", c_uint),
+                 ("y", c_uint),
+                 ("width", c_uint),
+                 ("height", c_uint),
+                 ("angle", c_uint) ]
+  
+  
+class MocapTread( QThread ):
     nofilter,lowPassFilter,gouseanFilter = range(0,3)
     
     def __init__(self, parent = None):
-    
         QThread.__init__(self, parent)
         
-        self.tcpServer = None 
         self.exiting = False
         self.commandFromServer=None
         # Give the connection a queue for data we want to send/ reseve
@@ -74,58 +85,11 @@ class Server(QThread):
                                         activeChannels=dict(x=True,
                                                           y=True,
                                                           w=False,
-                                                          h=False)) for rbID in xrange(0,self.maxPoints)}
-    # file recording
-        finc = 0
-        fileName = "mocapRecording" 
-        self.recordToFile = False
+                                                          h=False)) for rbID in xrange(0,self.maxPoints+1)}
+        print self.filterBuffers
+        # file recording
         self.openRecording = False
-        for f in os.listdir("./"):
-            if re.search(fileName, f):
-                finc = finc + 1
-        self.rocodingFileName = '%s%d.txt'%(fileName,finc)
-
-    def render(self,lisenPort,mocapclientIP,pluginClientIP):
-        self.exiting = False
-        self.tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.tcpServer.setblocking(0)    
-            
-        # Bind the socket to the port
-        server_address = ('', lisenPort)
-        print >>sys.stderr, 'starting up on %s port %s' % server_address
-        self.tcpServer.bind(server_address)
-        
-        # Listen for incoming connections
-        self.tcpServer.listen(2)        
-
-        # wait for a connection for give time then close in none found
-        self.timeout = 60
-        
-        # Sockets from which we expect to read
-        self.inputs = [ self.tcpServer ]
-        
-        if mocapclientIP:
-            self.mocapSendClientIP = [ mocapclientIP ]
-        else:
-            self.mocapSendClientIP = [  ]                
-        
-        # Sockets to which we expect to write
-        self.outputs = [ ]
-        if pluginClientIP:
-            self.readCliantIP = [ pluginClientIP ]
-        else:
-            self.readCliantIP = [  ]
-
-        self.start()
-        
-    def closeServer(self):
-        self.commandFromServer = CMD_SERVER_CLOSING
-        self.exiting = True
-        if self.tcpServer:
-            self.tcpServer.close()              
-        self.exit()
-        self.emit(SIGNAL("stopingServer()"))
-       
+    
     def buildFromData(self,data):
         
         tag = data['tag']
@@ -213,14 +177,7 @@ class Server(QThread):
             for dindex in xrange(0,pointDataSize):
                 frameData.append(MOCAP_ROGE_DATA)
         return frameData
-    
-    def __del__(self):
-        print "deleating thred"
-        self.exiting = True
-        if self.tcpServer:
-            self.tcpServer.close()
-        self.wait()       
-            
+
     def updateSmartBox(self, smartBoxSize):
         self.smartFilterBoxSize = smartBoxSize
     
@@ -239,9 +196,6 @@ class Server(QThread):
     def updateOutputChannel(self,tag,channel,on):
         print tag,channel,on,self.filterBuffers[tag]['activeChannels'][channel] 
         self.filterBuffers[tag]['activeChannels'][channel] = on
-       
-    def closeMocapClient(self):
-        self.commandFromServer = CMD_SERVER_CLOSING
        
     def clasifyData(self,data):
         print "clasifyData"
@@ -274,6 +228,280 @@ class Server(QThread):
         if self.openRecording:
             self.openRecording.close()
             self.openRecording = None
+
+    def applyFiltering(self,tag,x,y,w,h):
+        if self.filterBuffers[tag]['activeChannels']['x']:
+            
+            self.filterBuffers[tag]['x']['buffer'].append(x)
+            
+            if self.filterBuffers[tag]['x']['filterType'] ==  Server.lowPassFilter:
+                x = self.filterBuffers[tag]['x']['buffer'].filterButterworth()  
+            elif self.filterBuffers[tag]['x']['filterType'] ==  Server.gouseanFilter:
+                x = self.filterBuffers[tag]['x']['buffer'].filterGauss() 
+            else:
+                # no filter
+                pass
+
+        if self.filterBuffers[tag]['activeChannels']['y']:
+            self.filterBuffers[tag]['y']['buffer'].append(y)
+            if self.filterBuffers[tag]['y']['filterType'] ==  Server.lowPassFilter:
+                y = self.filterBuffers[tag]['y']['buffer'].filterButterworth()  
+            elif self.filterBuffers[tag]['y']['filterType'] ==  Server.gouseanFilter:
+                y = self.filterBuffers[tag]['y']['buffer'].filterGauss() 
+            else:
+                # no filter
+                pass
+            
+        if self.filterBuffers[tag]['activeChannels']['w']:
+            self.filterBuffers[tag]['w']['buffer'].append(w)
+            if self.filterBuffers[tag]['w']['filterType'] ==  Server.lowPassFilter:
+                w = self.filterBuffers[tag]['w']['buffer'].filterButterworth()  
+            
+            elif self.filterBuffers[tag]['w']['filterType'] ==  Server.gouseanFilter:
+                w = self.filterBuffers[tag]['w']['buffer'].filterGauss()                                        
+            else:
+                # no filter
+                pass
+            
+        if self.filterBuffers[tag]['activeChannels']['h']:
+            self.filterBuffers[tag]['h']['buffer'].append(h)
+            if self.filterBuffers[tag]['h']['filterType'] ==  Server.lowPassFilter:
+                h = self.filterBuffers[tag]['h']['buffer'].filterButterworth()  
+            elif self.filterBuffers[tag]['h']['filterType'] ==  Server.gouseanFilter:
+                h = self.filterBuffers[tag]['h']['buffer'].filterGauss()                                             
+            else:
+                # no filter
+                pass
+            
+        return (x,y,w,h)
+
+class LocalPixey( MocapTread ):
+    
+    def __init__(self, parent = None):
+        
+        MocapTread.__init__(self, parent)
+        self.exiting = False
+        self.blocks = None
+        
+    def __del__(self):
+        print "deleting thred"
+        self.exiting = True
+        self.wait()         
+    
+    def render(self):
+        from pixy import BlockArray,pixy_init
+        ###
+        # Initialize Pixy Interpreter thread #
+        pixy_init()
+        self.blocks = BlockArray(100)
+        self.start()
+
+    def closeThred(self):
+        self._tmpfile.close()
+        self.exiting = True            
+        #self.exit()
+        self.wait()
+          
+    def run(self):
+        from pixy import pixy_get_blocks
+        maxPoints = MAX_NUM_POINTS
+        pointDataSize = POINT_DATA_SIZE
+        CMD_PASS = 1001
+        CMD_NEW_FRAME = 1002
+        frame = 0
+        # Note: This is never called directly. It is called by Qt once the
+        # thread environment has been set up.
+        while not self.exiting:
+            numOfPointForFrame = pixy_get_blocks(100, self.blocks)
+            frame = frame + 1
+            if numOfPointForFrame > 0:
+                numOfPointForFrame = numOfPointForFrame if numOfPointForFrame < maxPoints else maxPoints
+                for index in xrange (0, numOfPointForFrame):
+                    # command to identify all point for frame have bee sent 
+                    cmd = CMD_PASS if index < ( numOfPointForFrame -1 ) else CMD_NEW_FRAME
+                    tag = index#blocks[index].signature
+                    coltag = self.blocks[index].signature
+                    x = self.blocks[index].x
+                    y = self.blocks[index].y
+                    w = self.blocks[index].width
+                    h = self.blocks[index].height            
+
+                    if self.setClasifydata:
+                        # setup nural pos tages done once to enable consistant traking
+                        # of named points , once done smart clasification is used
+                        #self._clasfyRegens.assingTags(tag,coltag,x,y,w,h)
+                        tag = self._clasfyRegens.regenClasify(tag,coltag,x,y)
+                        
+                    if int(tag) != MOCAP_ROGE_DATA:
+                        
+                        if self.filterDataFlag:
+                            x,y,w,h = self.applyFiltering(tag, x, y, w, h)
+                        ##
+                        # emit point data to update the UI draw  
+                        #
+                        self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
+                                  tag, x, y,w,h)     
+
+                    if  cmd == CMD_NEW_FRAME:
+                        break  
+                
+                if self.setClasifydata:
+                    self._clasfyRegens.updateBoxesForNextFrame()
+                    
+                self.emit(SIGNAL("frameEnd()"))   
+                
+                if self.openRecording:
+                    self.openRecording.write(str(self.frameDataBuffer) + "\n")         
+                
+                time.sleep(.02)    
+                
+class LocalClient( MocapTread ):
+    
+    def __init__(self, rawTempFile,  parent = None):
+        MocapTread.__init__(self, parent)
+        self.exiting = False
+        print rawTempFile
+        self.curRecordFile = rawTempFile#'C:\\Users\\gregmeeresyoung\\Desktop\\mocapRecording.tmp'
+        
+    def __del__(self):
+        print "deleting thred"
+        self.exiting = True
+        self.wait()         
+    
+    def render(self):
+        self._tmpfile = QFile(self.curRecordFile)
+        
+        if not self._tmpfile.open(QFile.ReadOnly | QFile.Text):
+            QMessageBox.warning(self, "Nagapi Mocap",
+                    "Cannot write file %s:\n%s." % (self.curRecordFile, self._tmpfile.errorString()))
+        
+        self.start()
+
+    def closeThred(self):
+        self._tmpfile.close()
+        self.exiting = True            
+        #self.exit()
+        self.wait()
+          
+    def run(self):
+        maxPoints = MAX_NUM_POINTS
+        pointDataSize = POINT_DATA_SIZE
+        # Note: This is never called directly. It is called by Qt once the
+        # thread environment has been set up.
+        while not self.exiting:
+            while not self._tmpfile.atEnd() and not self.exiting:
+                line = str(self._tmpfile.readLine())
+                line = line.replace("[",'')
+                line = line.replace("]",'')
+                unpacked_data = line.split(', ')
+                
+                for index in xrange(0,maxPoints):
+                    
+                    dataIndexOffset = 0
+                    if index != 0:
+                        dataIndexOffset = index * pointDataSize
+    
+                    tag = int(unpacked_data[dataIndexOffset])
+                    coltag = int(unpacked_data[dataIndexOffset+1])
+                    
+                    x = long(unpacked_data[dataIndexOffset+2])
+                    y = long(unpacked_data[dataIndexOffset+3])
+                    w = long(unpacked_data[dataIndexOffset+4])
+                    h = long(unpacked_data[dataIndexOffset+5])
+                    
+                    if self.setClasifydata:
+                        # setup nural pos tages done once to enable consistant traking
+                        # of named points , once done smart clasification is used
+                        #self._clasfyRegens.assingTags(tag,coltag,x,y,w,h)
+                        tag = self._clasfyRegens.regenClasify(tag,coltag,x,y)
+                        
+                    if int(tag) != MOCAP_ROGE_DATA:
+                        
+                        if self.filterDataFlag:
+                            x,y,w,h = self.applyFiltering(tag, x, y, w, h)
+                        ##
+                        # emit point data to update the UI draw  
+                        #
+                        self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
+                                  tag, x, y,w,h)                         
+                
+                # loop throught maybe points and try and clasify
+                
+                
+                if self.setClasifydata:
+                    self._clasfyRegens.updateBoxesForNextFrame()
+                    
+                self.emit(SIGNAL("frameEnd()"))
+                
+                if self.openRecording:
+                    self.openRecording.write(str(self.frameDataBuffer) + "\n")
+                
+                time.sleep(.02)
+            
+            self._tmpfile.seek(0)
+
+
+class Server(MocapTread):
+
+    nofilter,lowPassFilter,gouseanFilter = range(0,3)
+    
+    def __init__(self, parent = None):
+    
+        MocapTread.__init__(self, parent)
+        
+        self.tcpServer = None 
+        
+    def render(self,lisenPort,mocapclientIP,pluginClientIP):
+        self.exiting = False
+        self.tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.tcpServer.setblocking(0)    
+            
+        # Bind the socket to the port
+        server_address = ('', lisenPort)
+        print >>sys.stderr, 'starting up on %s port %s' % server_address
+        self.tcpServer.bind(server_address)
+        
+        # Listen for incoming connections
+        self.tcpServer.listen(2)        
+
+        # wait for a connection for give time then close in none found
+        self.timeout = 60
+        
+        # Sockets from which we expect to read
+        self.inputs = [ self.tcpServer ]
+        
+        if mocapclientIP:
+            self.mocapSendClientIP = [ mocapclientIP ]
+        else:
+            self.mocapSendClientIP = [  ]                
+        
+        # Sockets to which we expect to write
+        self.outputs = [ ]
+        if pluginClientIP:
+            self.readCliantIP = [ pluginClientIP ]
+        else:
+            self.readCliantIP = [  ]
+
+        self.start()
+
+    def closeMocapClient(self):
+        self.commandFromServer = CMD_SERVER_CLOSING
+                
+    def closeThred(self):
+        self.commandFromServer = CMD_SERVER_CLOSING
+        self.exiting = True
+        if self.tcpServer:
+            self.tcpServer.close()              
+        #self.exit()
+        self.wait()
+        self.emit(SIGNAL("stopingServer()"))
+    
+    def __del__(self):
+        print "deleating thred"
+        self.exiting = True
+        if self.tcpServer:
+            self.tcpServer.close()
+        self.wait()       
        
     def run(self):
         while not self.exiting and self.inputs:
@@ -463,56 +691,11 @@ class Server(QThread):
                 del self.data_queues[s]
                 del self.receve_queues[s]
         
-        #self.closeServer()
+        #self.closeThred()
         #self.tcpServer.close()                
         #self.exit()
         #self.emit(SIGNAL("stopingServer()"))
 
-    def applyFiltering(self,tag,x,y,w,h):
-        if self.filterBuffers[tag]['activeChannels']['x']:
-            
-            self.filterBuffers[tag]['x']['buffer'].append(x)
-            
-            if self.filterBuffers[tag]['x']['filterType'] ==  Server.lowPassFilter:
-                x = self.filterBuffers[tag]['x']['buffer'].filterButterworth()  
-            elif self.filterBuffers[tag]['x']['filterType'] ==  Server.gouseanFilter:
-                x = self.filterBuffers[tag]['x']['buffer'].filterGauss() 
-            else:
-                # no filter
-                pass
-
-        if self.filterBuffers[tag]['activeChannels']['y']:
-            self.filterBuffers[tag]['y']['buffer'].append(y)
-            if self.filterBuffers[tag]['y']['filterType'] ==  Server.lowPassFilter:
-                y = self.filterBuffers[tag]['y']['buffer'].filterButterworth()  
-            elif self.filterBuffers[tag]['y']['filterType'] ==  Server.gouseanFilter:
-                y = self.filterBuffers[tag]['y']['buffer'].filterGauss() 
-            else:
-                # no filter
-                pass
-            
-        if self.filterBuffers[tag]['activeChannels']['w']:
-            self.filterBuffers[tag]['w']['buffer'].append(w)
-            if self.filterBuffers[tag]['w']['filterType'] ==  Server.lowPassFilter:
-                w = self.filterBuffers[tag]['w']['buffer'].filterButterworth()  
-            
-            elif self.filterBuffers[tag]['w']['filterType'] ==  Server.gouseanFilter:
-                w = self.filterBuffers[tag]['w']['buffer'].filterGauss()                                        
-            else:
-                # no filter
-                pass
-            
-        if self.filterBuffers[tag]['activeChannels']['h']:
-            self.filterBuffers[tag]['h']['buffer'].append(h)
-            if self.filterBuffers[tag]['h']['filterType'] ==  Server.lowPassFilter:
-                h = self.filterBuffers[tag]['h']['buffer'].filterButterworth()  
-            elif self.filterBuffers[tag]['h']['filterType'] ==  Server.gouseanFilter:
-                h = self.filterBuffers[tag]['h']['buffer'].filterGauss()                                             
-            else:
-                # no filter
-                pass
-            
-        return (x,y,w,h)
         
 if __name__ == '__main__':
     pass

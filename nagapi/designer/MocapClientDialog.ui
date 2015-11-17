@@ -19,10 +19,17 @@
      <item>
       <widget class="QRadioButton" name="radioButton_local">
        <property name="text">
-        <string>local Client</string>
+        <string>local File</string>
        </property>
        <property name="checked">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioButton_usbCam">
+       <property name="text">
+        <string>USB Camera</string>
        </property>
       </widget>
      </item>

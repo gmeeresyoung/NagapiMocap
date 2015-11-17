@@ -141,7 +141,6 @@ class ClasificationBox(QtGui.QGraphicsRectItem):
         self.clasifyData['filter']['hChannel']['gasianAv'] = data['filter']['hChannel']['gasianAv']
         self.clasifyData['filter']['hChannel']['freq'] = data['filter']['hChannel']['freq']
         self.clasifyData['filter']['hChannel']['filterbufferSize'] = data['filter']['hChannel']['filterbufferSize']
-        print self.clasifyData
         self._modifyed = True   
     
     def getData(self):
@@ -237,27 +236,7 @@ class MocapGraphicsView(QtGui.QGraphicsView):
         self._currentBox.setSelected(False)
         self.itemMovable = False
         self.updateSceneDataInCamraSpace()
-    '''
-    def buildFromDataOld(self,documents):
-        self.clear()
-        for data in yaml.load_all(documents):
-            for clasifyData in data.values():
-                
-                w=clasifyData['custemRege']['width']
-                h=clasifyData['custemRege']['height'] 
-                x=clasifyData['custemRege']['topLeftX']
-                y=clasifyData['custemRege']['topLeftY'] 
-                                
-                cBox = ClasificationBox(x,y,w,h)
-                cBox.setColour(clasifyData['custemRege']['colourID']) 
-                cBox.setData(clasifyData)
-                self._currentBox = cBox
-                
-                self.scene().addItem(self._currentBox)
-                self._currentBox.setSelected(False)
-                self.itemMovable = False
-                self.updateSceneDataInCamraSpace()
-    '''
+
     def setModified(self,modified):
         for item in self.scene().items():
             if type(item) == ClasificationBox:
@@ -374,6 +353,15 @@ class MocapGraphicsView(QtGui.QGraphicsView):
                                      self._currentBox.rect().topLeft().y(),
                                      self._currentBox.rect().width(),
                                      new_h)
+    
+    def getData(self):
+        dump = dict()
+        inc = 0
+        for item in self.scene().items():
+            if type(item) == ClasificationBox:
+                dump[inc] = item.clasifyData
+                inc= inc + 1        
+        return dump
     
     def dumpData(self,stream):
         dump = dict()

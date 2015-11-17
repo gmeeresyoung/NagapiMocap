@@ -16,7 +16,7 @@ import yaml
 import re
 
 from MocapGraphicsView import MocapBox
-from nagapi.MocapServer import Server
+from nagapi.MocapServer import Server,LocalClient,LocalPixey
 from nagapi.MocapUtils import *
 
 from nagapi.nagapi import FpsClock
@@ -33,7 +33,7 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         super(MainWindow,self).__init__(parent)
         super(MainWindow,self).setupUi(self)
 
-        self.thread = Server(self)
+        self.thread = None#Server(self)
         
         self.BoxSceneItems = dict()
         self.boxesLastFrame = dict()
@@ -57,19 +57,22 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         #AsciiFile(rf)
         #rf.close()
     
-    def connectActions(self):
-        
+    def connectTreadSingals(self):
         self.connect(self.thread, QtCore.SIGNAL("subFrame(int, long, long, long, long)"), self.updateSubframe)
         self.connect(self.thread, QtCore.SIGNAL("frameEnd()"), self.updateFrame)
         self.connect(self.thread, QtCore.SIGNAL("stopingServer()"), self.stopingServer)
-        
+                
+        self.connect(self, QtCore.SIGNAL("recording(QString)"), self.thread.startRecording)
+        self.connect(self, QtCore.SIGNAL("stopRecording()"), self.thread.stopRecording)
+        self.connect(self, QtCore.SIGNAL("closeThred()"), self.thread.closeThred)
+            
+    def connectActions(self):
         self.connect(self.actionListenForConnections, QtCore.SIGNAL("triggered(bool)"), self.openServer)
         self.connect(self.actionClassifiedData, QtCore.SIGNAL("triggered(bool)"), self.clasifyData)
         self.connect(self.actionRawData, QtCore.SIGNAL("triggered(bool)"), self.rawData)
         self.connect(self.actionRecordMocap, QtCore.SIGNAL("triggered(bool)"), self.recordMocap)
         
-        self.connect(self, QtCore.SIGNAL("recording(QString)"), self.thread.startRecording)
-        self.connect(self, QtCore.SIGNAL("stopRecording()"), self.thread.stopRecording)
+        
         self.connect(self.actionFilterData, QtCore.SIGNAL("triggered(bool)"),self.filterData)
         
         self.connect(self.action_Close, QtCore.SIGNAL("triggered()"), self.close)
@@ -145,15 +148,15 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             self.thread.filterOff()
      
     def updateClasifyData(self):
-        if self.graphicsView.regenSelected() and self.actionClassifiedData.isChecked():
+        if self.graphicsView.regenSelected() and self.actionFilterData.isChecked():
+            self.filterData(True)
+        elif self.graphicsView.regenSelected() and self.actionClassifiedData.isChecked():
             self.clasifyData(True)
             
     def clasifyData(self,on):
         if on:
             self.actionRawData.setChecked(False)
             data = self.graphicsView.getClasificationRegens()
-            from pprint import pprint
-            pprint(data)
             self.thread.clasifyData(data)
         else:
             self.actionRawData.setChecked(True)
@@ -213,25 +216,50 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         self.fpsDisplay.display(fpsclock.speed()) 
 
     def openServer(self,lisen):
-        
+        #currentFile = self.getCurrentFile()
         #display ui for inputing client programs for mocap client and plugin client 
         if lisen:
             if self.clientDialog.exec_():
                 
                 if self.clientDialog.radioButton_remote.isChecked():
+                    
+                    self.thread = Server()
+                    for clasifyData in self.graphicsView.getData().values():
+                        if self.thread:
+                            self.thread.buildFromData(clasifyData)     
+                    
                     lisenPort = int(self.clientDialog.comboBox_lisenPort.itemText(self.clientDialog.comboBox_lisenPort.currentIndex()))
                     mocapClientIP = self.clientDialog.comboBox_mocapIP.itemText(self.clientDialog.comboBox_mocapIP.currentIndex())
                     pluginClientIP = self.clientDialog.comboBox_pluginIP.itemText(self.clientDialog.comboBox_pluginIP.currentIndex())
                     print "starting server"
                     self.thread.render(lisenPort,mocapClientIP,pluginClientIP)
                     self.statusBar().showMessage("Lisinging for clients", 0)
+                
+                elif self.clientDialog.radioButton_remote.isChecked():
+                    rawTempFile = self.getTempFile()
+                    self.thread = LocalClient(rawTempFile)
+                    for clasifyData in self.graphicsView.getData().values():
+                        if self.thread:
+                            self.thread.buildFromData(clasifyData)                    
+                
+                    self.connectTreadSingals()
+                    self.thread.render()
+                    self.statusBar().showMessage("Running local client", 0)
+            
                 else:
-                    print "Run locl client"
+                    self.thread = LocalPixey()
+                    for clasifyData in self.graphicsView.getData().values():
+                        if self.thread:
+                            self.thread.buildFromData(clasifyData)                    
+                
+                    self.connectTreadSingals()
+                    self.thread.render()
+                    self.statusBar().showMessage("Running local client", 0)                    
             else:
                 self.actionListenForConnections.setChecked(False)
         else:
             
-            self.thread.closeServer()
+            self.emit(QtCore.SIGNAL("closeThred()"))#self.thread.closeServer()
     
     def stopingServer(self):
         self.actionListenForConnections.setChecked(False)
@@ -244,7 +272,8 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             if buttion.text () in ("Apply",'OK'):
                 data = self.editDiolog.getData()
                 regen.setData(data)
-                self.thread.buildFromData(data)
+                if self.thread:
+                    self.thread.buildFromData(data)
                 self.statusBar().showMessage("upedated regen %s"%data['name'], 2000)
     
     def blockEditDiolog(self):
@@ -274,8 +303,9 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
     def closeEvent(self, event):
         # do stuff
         print "cleanup"
-        self.thread.stopRecording()
-        self.thread.exiting = True
+        if self.thread:
+            self.thread.stopRecording()
+            self.thread.exiting = True
         
         if self.maybeSave():
             self.writeSettings()
@@ -294,7 +324,13 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             self.setRecordCurrentFile('mocapRecording.tmp')
             self.emit(QtCore.SIGNAL("recording(QString)"),self.curRecordFile)
             print "start temp file recroding"
-            
+
+    def getTempFile(self):
+            fileName = QtGui.QFileDialog.getOpenFileName(self)
+            if fileName:
+                return fileName
+            return None
+        
     def open(self):
         if self.maybeSave():
             fileName = QtGui.QFileDialog.getOpenFileName(self)
@@ -346,6 +382,9 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             shownName = 'untitled.mcap'
 
         self.setWindowTitle("%s[*] - Nagapi Mocap" % shownName)
+    
+    def getCurrentFile(self):
+        return self.curFile
 
     def setRecordCurrentFile(self, fileName):
         self.curRecordFile = fileName
@@ -377,7 +416,8 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         for data in yaml.load_all(inf):
             for clasifyData in data.values():
                 self.graphicsView.buildFromData(clasifyData)
-                self.thread.buildFromData(clasifyData) 
+                if self.thread:
+                    self.thread.buildFromData(clasifyData) 
         
         QtGui.QApplication.restoreOverrideCursor()
 

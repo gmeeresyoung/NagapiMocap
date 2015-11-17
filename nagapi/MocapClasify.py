@@ -3,7 +3,7 @@ Created on 7 Oct 2015
 
 @author: gregmeeresyoung
 '''
-from nagapi.MocapUtils import MOCAP_ROGE_DATA
+from MocapUtils import MOCAP_ROGE_DATA
 
 
 class Box(object):
@@ -44,6 +44,7 @@ class Clasify( object ):
 
     def regenClasify(self,tag,coltag,x,y):
         screenspace_x,screenspace_y = x*2,y*2
+        
         if self._clasifyData.has_key(coltag):
             for box in self._clasifyData[coltag]:
                 if box.inBox(screenspace_x,screenspace_y):
@@ -53,6 +54,7 @@ class Clasify( object ):
                                                  self._smartBoxSize))
                     #print "clasifye",box.tag()
                     return box.tag()
+        
         #print "lost clasification" 
         return MOCAP_ROGE_DATA#btag      
     
