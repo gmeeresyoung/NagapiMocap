@@ -316,10 +316,15 @@ class LocalPixey( MocapTread ):
             if numOfPointForFrame > 0:
                 numOfPointForFrame = numOfPointForFrame if numOfPointForFrame < maxPoints else maxPoints
                 for index in xrange (0, numOfPointForFrame):
+                    
+                    dataIndexOffset = 0
+                    if index != 0:
+                        dataIndexOffset = index * pointDataSize
+                        
                     # command to identify all point for frame have bee sent 
                     cmd = CMD_PASS if index < ( numOfPointForFrame -1 ) else CMD_NEW_FRAME
-                    tag = index#blocks[index].signature
-                    coltag = self.blocks[index].signature
+                    tag = int(index)#blocks[index].signature
+                    coltag = int(self.blocks[index].signature)
                     
                     # flip for ui
                     y = self.blocks[index].x
@@ -342,7 +347,14 @@ class LocalPixey( MocapTread ):
                         #
                         self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
                                   tag, x, y,w,h)     
-
+                    
+                    self.frameDataBuffer[dataIndexOffset] = tag
+                    self.frameDataBuffer[dataIndexOffset+1] = coltag
+                    self.frameDataBuffer[dataIndexOffset+2] = x
+                    self.frameDataBuffer[dataIndexOffset+3] = y
+                    self.frameDataBuffer[dataIndexOffset+4] = w
+                    self.frameDataBuffer[dataIndexOffset+5] = h
+                    
                     if  cmd == CMD_NEW_FRAME:
                         break  
                 
@@ -425,7 +437,13 @@ class LocalClient( MocapTread ):
                         #
                         self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
                                   tag, x, y,w,h)                         
-                
+                    
+                        self.frameDataBuffer[dataIndexOffset] = tag
+                        self.frameDataBuffer[dataIndexOffset+1] = coltag
+                        self.frameDataBuffer[dataIndexOffset+2] = x
+                        self.frameDataBuffer[dataIndexOffset+3] = y
+                        self.frameDataBuffer[dataIndexOffset+4] = w
+                        self.frameDataBuffer[dataIndexOffset+5] = h
                 # loop throught maybe points and try and clasify
                 
                 

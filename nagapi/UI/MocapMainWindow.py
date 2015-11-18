@@ -460,7 +460,7 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
                     "Cannot write file %s:\n%s." % (self.curRecordFile, tmpfile.errorString()))        
         
         if ext == '.raw': 
-            outf << tmpfile.read.readAll()
+            outf << tmpfile.readAll()
         if ext == '.mocap':
             print "convert to mocap format filterd and clasifyed"
             outf << tmpfile.readAll()
