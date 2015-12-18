@@ -19,12 +19,12 @@ MOCAP_ROGE_DATA = 9999
 SERVER_RECORD_DATA = 4444
 
 #DATA
-MAX_NUM_POINTS = 25
+MAX_NUM_POINTS = 22
 POINT_DATA_SIZE = 6
 
 class AsciiFile( object ):
     
-    def __init__(self,rawFile):
+    def __init__(self,rawFile,setupData):
         maxPoints = MAX_NUM_POINTS
         pointDataSize = POINT_DATA_SIZE
         
@@ -46,6 +46,7 @@ class AsciiFile( object ):
             #print line
             line = line.replace("[",'')
             line = line.replace("]",'')
+            line = line.replace("L",'')
             unpacked_data = line.split(', ')
             
             for index in xrange(0,maxPoints):
@@ -56,10 +57,11 @@ class AsciiFile( object ):
 
                 tag = int(unpacked_data[dataIndexOffset])
                 
-                y = unpacked_data[dataIndexOffset+2]
-                x = unpacked_data[dataIndexOffset+3]
-                h = unpacked_data[dataIndexOffset+4] 
-                w = unpacked_data[dataIndexOffset+5] 
+                # flip data to portrate
+                x = unpacked_data[dataIndexOffset+2]
+                y = unpacked_data[dataIndexOffset+3]
+                w = unpacked_data[dataIndexOffset+4] 
+                h = unpacked_data[dataIndexOffset+5] 
                 
                 if int(tag) != MOCAP_ROGE_DATA:
                     
@@ -86,7 +88,12 @@ class AsciiFile( object ):
         header =self.header()
         asciifile = asciifile + header
         for tag in locNameDict.keys():
-            locName = "mocaploc_" + str(tag)
+            locName = str(tag) + "_loc"
+            for inc,data in setupData.items():
+                if data['tag'] == tag:
+                    locName = data['name'] + "_loc"
+                    break
+            
             loc = self.creatLocator().substitute(locName=locName)     
             asciifile = asciifile + loc
             

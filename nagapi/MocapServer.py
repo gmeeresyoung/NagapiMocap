@@ -52,7 +52,7 @@ class MocapTread( QThread ):
         self.clientCommands = dict()
         
         # set up data streem for commands 
-        self.packer_cmd = struct.Struct('I')
+        self.packer_cmd = struct.Struct('4s')#struct.Struct('I')
         self.cmdBuffer = ctypes.create_string_buffer(self.packer_cmd.size)
         self.amount_expected_cmd = self.packer_cmd.size
         # setup data streem for mocp data
@@ -72,21 +72,21 @@ class MocapTread( QThread ):
         
         self.filterBuffers = {rbID:dict(x=dict(buffer=CircularBuffer(size=self.filterBufferSize),
                                             filterType=Server.lowPassFilter,
-                                            lowPassFreq = .003),
+                                            lowPassFreq = .15),
                                         y=dict(buffer=CircularBuffer(size=self.filterBufferSize),
                                              filterType=Server.lowPassFilter,
-                                             lowPassFreq = .003),
+                                             lowPassFreq = .15),
                                         w=dict(buffer=CircularBuffer(size=self.filterBufferSize),
                                              filterType=Server.lowPassFilter,
-                                             lowPassFreq = .003),
+                                             lowPassFreq = .15),
                                         h=dict(buffer=CircularBuffer(size=self.filterBufferSize),
                                              filterType=Server.lowPassFilter,
-                                             lowPassFreq = .003),
+                                             lowPassFreq = .15),
                                         activeChannels=dict(x=True,
                                                           y=True,
                                                           w=False,
                                                           h=False)) for rbID in xrange(0,self.maxPoints+1)}
-        print self.filterBuffers
+        
         # file recording
         self.openRecording = False
     
@@ -162,9 +162,9 @@ class MocapTread( QThread ):
     
     def buildPacker(self,numOfpoints,pointLength):
         frameData = ""
-        pointData = "I"#'I I I I I'
+        pointData = "f"#'I I I I I'
         for i in xrange(1,pointLength):
-            pointData  = pointData + " I"
+            pointData  = pointData + " f"
              
         for i in xrange(0,numOfpoints):
             frameData = frameData +" "+ pointData
@@ -182,25 +182,28 @@ class MocapTread( QThread ):
         self.smartFilterBoxSize = smartBoxSize
     
     def updateBufferSize(self,tag,channel,newSize):
-        print tag,channel,newSize,self.filterBuffers[tag][channel]['buffer'] 
+        #print tag,channel,newSize,self.filterBuffers[tag][channel]['buffer'] 
         self.filterBuffers[tag][channel]['buffer'] = CircularBuffer(size=newSize)
     
     def updateFilterType(self,tag,channel,filterType):
-        print tag,channel,filterType,self.filterBuffers[tag][channel]['filterType'] 
+        #print tag,channel,filterType,self.filterBuffers[tag][channel]['filterType'] 
         self.filterBuffers[tag][channel]['filterType'] = filterType
 
     def updateLowPassFreq(self,tag,channel,newFreq):
-        print tag,channel,newFreq,self.filterBuffers[tag][channel]['lowPassFreq']
+        #print tag,channel,newFreq,self.filterBuffers[tag][channel]['lowPassFreq']
         self.filterBuffers[tag][channel]['lowPassFreq'] = newFreq
+        self.filterBuffers[tag][channel]['buffer'].updateFilterFrequecy(newFreq)
 
     def updateOutputChannel(self,tag,channel,on):
-        print tag,channel,on,self.filterBuffers[tag]['activeChannels'][channel] 
+        #print tag,channel,on,self.filterBuffers[tag]['activeChannels'][channel] 
         self.filterBuffers[tag]['activeChannels'][channel] = on
        
     def clasifyData(self,data):
         print "clasifyData"
         self.commandFromServer = MOCAP_CLASSIFY_DATA
-        self._clasfyRegens = MocapClasify.Clasify(data,self.maxPoints,self.smartFilterBoxSize)
+        #self._clasfyRegens = MocapClasify.ClasifyRadiusNeighbors(data,self.maxPoints,self.smartFilterBoxSize)#
+        #self._clasfyRegens = MocapClasify.Clasify(data,self.maxPoints,self.smartFilterBoxSize)
+        self._clasfyRegens = MocapClasify.ClasifyMinDist(data,self.maxPoints,self.smartFilterBoxSize)
         self.setClasifydata = True
         self.filterDataFlag = False 
            
@@ -230,6 +233,7 @@ class MocapTread( QThread ):
             self.openRecording = None
 
     def applyFiltering(self,tag,x,y,w,h):
+        
         if self.filterBuffers[tag]['activeChannels']['x']:
             
             self.filterBuffers[tag]['x']['buffer'].append(x)
@@ -288,8 +292,12 @@ class LocalPixey( MocapTread ):
         self.exiting = True
         self.wait()         
     
-    def render(self):
+    def render(self,lisenPort,mocapClientIP,pluginClientIP):
+        
         from pixy import BlockArray,pixy_init
+        if self._serverThred:
+            self._serverThred.render(lisenPort,mocapClientIP,pluginClientIP)
+                  
         ###
         # Initialize Pixy Interpreter thread #
         pixy_init()
@@ -297,6 +305,8 @@ class LocalPixey( MocapTread ):
         self.start()
 
     def closeThred(self):
+        if self._serverThred:
+            self._serverThred.closeThred()
         self.exiting = True            
         #self.exit()
         self.wait()
@@ -335,9 +345,12 @@ class LocalPixey( MocapTread ):
                     if self.setClasifydata:
                         # setup nural pos tages done once to enable consistant traking
                         # of named points , once done smart clasification is used
-                        #self._clasfyRegens.assingTags(tag,coltag,x,y,w,h)
+                        '''
+                        self._clasfyRegens.regenClasify(tag,coltag,x,y, w,h,dataIndexOffset)
+                    
+                        '''
                         tag = self._clasfyRegens.regenClasify(tag,coltag,x,y)
-                        
+                     
                     if int(tag) != MOCAP_ROGE_DATA:
                         
                         if self.filterDataFlag:
@@ -348,49 +361,74 @@ class LocalPixey( MocapTread ):
                         self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
                                   tag, x, y,w,h)     
                     
-                    self.frameDataBuffer[dataIndexOffset] = tag
-                    self.frameDataBuffer[dataIndexOffset+1] = coltag
-                    self.frameDataBuffer[dataIndexOffset+2] = x
-                    self.frameDataBuffer[dataIndexOffset+3] = y
-                    self.frameDataBuffer[dataIndexOffset+4] = w
-                    self.frameDataBuffer[dataIndexOffset+5] = h
+                        self.frameDataBuffer[dataIndexOffset] = tag
+                        self.frameDataBuffer[dataIndexOffset+1] = coltag
+                        self.frameDataBuffer[dataIndexOffset+2] = x
+                        self.frameDataBuffer[dataIndexOffset+3] = y
+                        self.frameDataBuffer[dataIndexOffset+4] = w
+                        self.frameDataBuffer[dataIndexOffset+5] = h
+                    else:
+                        self.frameDataBuffer[dataIndexOffset] = 9999
+                        self.frameDataBuffer[dataIndexOffset+1] = 9999
+                        self.frameDataBuffer[dataIndexOffset+2] = 9999
+                        self.frameDataBuffer[dataIndexOffset+3] = 9999
+                        self.frameDataBuffer[dataIndexOffset+4] = 9999
+                        self.frameDataBuffer[dataIndexOffset+5] = 9999    
                     
                     if  cmd == CMD_NEW_FRAME:
                         break  
                 
                 if self.setClasifydata:
+
                     self._clasfyRegens.updateBoxesForNextFrame()
-                    
+
                 self.emit(SIGNAL("frameEnd()"))   
                 
                 if self.openRecording:
                     self.openRecording.write(str(self.frameDataBuffer) + "\n")         
+
+                if self._serverThred:
+                    self.packer_data.pack_into(self.sendDataBuffer, 0, *self.frameDataBuffer)
+                    for key in self._serverThred.data_queues.keys():
+                        self._serverThred.data_queues[key].append(self.sendDataBuffer)                   
                 
-                time.sleep(.02)    
+
+                fpsclock.sleep()    
+
+    def setServer(self,serverThread):
+        self._serverThred = serverThread
                 
 class LocalClient( MocapTread ):
     
     def __init__(self, rawTempFile,  parent = None):
         MocapTread.__init__(self, parent)
         self.exiting = False
-        print rawTempFile
         self.curRecordFile = rawTempFile#'C:\\Users\\gregmeeresyoung\\Desktop\\mocapRecording.tmp'
+        self._serverThred = None
         
     def __del__(self):
         print "deleting thred"
         self.exiting = True
         self.wait()         
     
-    def render(self):
+    def render(self,lisenPort,mocapclientIP,pluginClientIP):
+        
+        if self._serverThred:
+            self._serverThred.render(lisenPort,mocapclientIP,pluginClientIP)
+                     
         self._tmpfile = QFile(self.curRecordFile)
+        
         
         if not self._tmpfile.open(QFile.ReadOnly | QFile.Text):
             QMessageBox.warning(self, "Nagapi Mocap",
                     "Cannot write file %s:\n%s." % (self.curRecordFile, self._tmpfile.errorString()))
-        
-        self.start()
+        else:
+            self.start()
 
     def closeThred(self):
+        if self._serverThred:
+            self._serverThred.closeThred()
+            
         self._tmpfile.close()
         self.exiting = True            
         #self.exit()
@@ -415,6 +453,8 @@ class LocalClient( MocapTread ):
                         dataIndexOffset = index * pointDataSize
     
                     tag = int(unpacked_data[dataIndexOffset])
+                    #if tag == MOCAP_ROGE_DATA and index < maxPoints:
+                    #    print "balls",index
                     coltag = int(unpacked_data[dataIndexOffset+1])
                     
                     x = long(unpacked_data[dataIndexOffset+2])
@@ -425,9 +465,9 @@ class LocalClient( MocapTread ):
                     if self.setClasifydata:
                         # setup nural pos tages done once to enable consistant traking
                         # of named points , once done smart clasification is used
-                        #self._clasfyRegens.assingTags(tag,coltag,x,y,w,h)
-                        tag = self._clasfyRegens.regenClasify(tag,coltag,x,y)
                         
+                        tag = self._clasfyRegens.regenClasify(tag,coltag,x,y)
+
                     if int(tag) != MOCAP_ROGE_DATA:
                         
                         if self.filterDataFlag:
@@ -438,27 +478,44 @@ class LocalClient( MocapTread ):
                         self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
                                   tag, x, y,w,h)                         
                     
-                        self.frameDataBuffer[dataIndexOffset] = tag
-                        self.frameDataBuffer[dataIndexOffset+1] = coltag
-                        self.frameDataBuffer[dataIndexOffset+2] = x
-                        self.frameDataBuffer[dataIndexOffset+3] = y
-                        self.frameDataBuffer[dataIndexOffset+4] = w
-                        self.frameDataBuffer[dataIndexOffset+5] = h
-                # loop throught maybe points and try and clasify
-                
+                        self.frameDataBuffer[dataIndexOffset] =     float(tag)
+                        self.frameDataBuffer[dataIndexOffset+1] = float(coltag)
+                        self.frameDataBuffer[dataIndexOffset+2] = float(x)
+                        self.frameDataBuffer[dataIndexOffset+3] = float(y)
+                        self.frameDataBuffer[dataIndexOffset+4] =   float( w)
+                        self.frameDataBuffer[dataIndexOffset+5] =   float( h)
+                        # loop throught maybe points and try and clasify
+
+                    else:
+                        self.frameDataBuffer[dataIndexOffset] = 9999
+                        self.frameDataBuffer[dataIndexOffset+1] = 9999
+                        self.frameDataBuffer[dataIndexOffset+2] = 9999
+                        self.frameDataBuffer[dataIndexOffset+3] = 9999
+                        self.frameDataBuffer[dataIndexOffset+4] = 9999
+                        self.frameDataBuffer[dataIndexOffset+5] = 9999                   
                 
                 if self.setClasifydata:
-                    self._clasfyRegens.updateBoxesForNextFrame()
                     
+                    self._clasfyRegens.updateBoxesForNextFrame()
+      
                 self.emit(SIGNAL("frameEnd()"))
                 
                 if self.openRecording:
                     self.openRecording.write(str(self.frameDataBuffer) + "\n")
                 
-                time.sleep(.02)
+                if self._serverThred:
+                    self.frameDataBuffer= self.frameDataBuffer
+                    self.packer_data.pack_into(self.sendDataBuffer, 0, *self.frameDataBuffer)
+                    for key in self._serverThred.data_queues.keys():
+                        self._serverThred.data_queues[key].append(self.sendDataBuffer)  
+                
+                fpsclock.sleep()   
+                
             
             self._tmpfile.seek(0)
 
+    def setServer(self,serverThread):
+        self._serverThred = serverThread
 
 class Server(MocapTread):
 
@@ -484,7 +541,7 @@ class Server(MocapTread):
         self.tcpServer.listen(2)        
 
         # wait for a connection for give time then close in none found
-        self.timeout = 60
+        self.timeout = 160
         
         # Sockets from which we expect to read
         self.inputs = [ self.tcpServer ]
@@ -523,6 +580,7 @@ class Server(MocapTread):
         self.wait()       
        
     def run(self):
+        
         while not self.exiting and self.inputs:
             readable, writable, exceptional = select.select(self.inputs, self.outputs, self.inputs, self.timeout)    
             if not (readable or writable or exceptional) or self.exiting:
@@ -559,7 +617,8 @@ class Server(MocapTread):
                             self.clientCommands[connection] = None
                             self.receve_queues[connection] = (Queue.Queue(),self.packer_data,self.amount_expected_mocap)
                     else:
-                        raise "dont know this server",client_address
+                        print connection, client_address
+                        raise "dont know this server"
                 else: 
                     # Look for the response
                     queue,packer,amount_expected  = self.receve_queues[s]
@@ -567,8 +626,14 @@ class Server(MocapTread):
                         amount_received,dataBuffer = queue.get_nowait()
                     except Queue.Empty:
                         amount_received,dataBuffer = (0,"")# get from mesage que
-                                
-                    dataBuffer = dataBuffer + s.recv(amount_expected - amount_received)            
+                    
+                    try:
+                        dataBuffer = dataBuffer + s.recv(amount_expected - amount_received)
+                    except Exception, e:
+                        print type(e)  # Should give you the exception type
+                        exceptional.append(s)
+                        continue
+                                                 
                     amount_received = len(dataBuffer)
                                 
                     if amount_expected == amount_received:
@@ -577,13 +642,15 @@ class Server(MocapTread):
                         ##
                         # get commads form connected clients, Identify it is a command using data lenth
                         #
+                       
                         if amount_expected == self.amount_expected_cmd: 
-                            for key in self.data_queues.keys():
-                                self.clientCommands[s] = unpacked_data[0]
+                            #for key in self.data_queues.keys():
+                            self.clientCommands[s] = int(unpacked_data[0])
                         ##
                         # get data from mocap client 
                         #                              
                         elif   amount_expected == self.amount_expected_mocap:
+                            
                             ##
                             # look for user input commands from server
                             #
@@ -594,14 +661,15 @@ class Server(MocapTread):
                             ##
                             # loop throught point on frame
                             #
+                             
                             for index in xrange(0,self.maxPoints):
                                 
                                 dataIndexOffset = 0
                                 if index != 0:
                                     dataIndexOffset = index * self.pointDataSize
-
-                                tag = unpacked_data[dataIndexOffset]
-                                coltag = unpacked_data[dataIndexOffset+1]
+                                
+                                tag = int(unpacked_data[dataIndexOffset])
+                                coltag = int(unpacked_data[dataIndexOffset+1])
                                 ##
                                 #I have fliped the data to work with the UI portrat layout. this need to be controled by the ui 
                                 #
@@ -613,8 +681,8 @@ class Server(MocapTread):
                                 if self.setClasifydata:
                                     # setup nural pos tages done once to enable consistant traking
                                     # of named points , once done smart clasification is used
-                                    #self._clasfyRegens.assingTags(tag,coltag,x,y,w,h)
                                     tag = self._clasfyRegens.regenClasify(tag,coltag,x,y)
+                                   
                                 
                                 # filtering the data
                                 if tag != MOCAP_ROGE_DATA:
@@ -629,18 +697,24 @@ class Server(MocapTread):
                                     self.emit(SIGNAL("subFrame(int, long, long, long, long)"),
                                               tag, x, y,w,h)                                       
                                 
-                                self.frameDataBuffer[dataIndexOffset] = tag
-                                self.frameDataBuffer[dataIndexOffset+1] = coltag
-                                self.frameDataBuffer[dataIndexOffset+2] = x
-                                self.frameDataBuffer[dataIndexOffset+3] = y
-                                self.frameDataBuffer[dataIndexOffset+4] = w
-                                self.frameDataBuffer[dataIndexOffset+5] = h
+                                    self.frameDataBuffer[dataIndexOffset] = tag
+                                    self.frameDataBuffer[dataIndexOffset+1] = coltag
+                                    self.frameDataBuffer[dataIndexOffset+2] = x
+                                    self.frameDataBuffer[dataIndexOffset+3] = y
+                                    self.frameDataBuffer[dataIndexOffset+4] = w
+                                    self.frameDataBuffer[dataIndexOffset+5] = h
+                                else:
+                                    self.frameDataBuffer[dataIndexOffset] = 9999
+                                    self.frameDataBuffer[dataIndexOffset+1] = 9999
+                                    self.frameDataBuffer[dataIndexOffset+2] = 9999
+                                    self.frameDataBuffer[dataIndexOffset+3] = 9999
+                                    self.frameDataBuffer[dataIndexOffset+4] = 9999
+                                    self.frameDataBuffer[dataIndexOffset+5] = 9999                                   
                                     
 
                             if self.setClasifydata:
-                                self._clasfyRegens.updateBoxesForNextFrame()
-                            
-                            
+                                self._clasfyRegens.updateBoxesForNextFrame()                              
+                                   
                             self.emit(SIGNAL("frameEnd()"))                            
                             
                             packer.pack_into(self.sendDataBuffer, 0, *self.frameDataBuffer)
@@ -650,6 +724,7 @@ class Server(MocapTread):
                                 
                             # put data in que for all cliant servers reding mocap data
                             for key in self.data_queues.keys():
+                                
                                 self.data_queues[key].append(self.sendDataBuffer)                                        
     
                     else:
@@ -658,16 +733,17 @@ class Server(MocapTread):
     
             # Handle outputs
             for s in writable:
-    
+                
                 if self.clientCommands[s] == CMD_NEW_FRAME:
                     try:
             
-                        next_msg = self.data_queues[s].pop()
+                        next_msg = self.data_queues[s][-1]#self.data_queues[s].pop()
                         
                     except IndexError:
                         # No messages waiting so stop checking for writability.
                         print >>sys.stderr, 'output queue for', s.getpeername(), 'is empty'
                     else:
+                        
                         s.send(next_msg)
                         self.clientCommands[s] =  None
             
@@ -683,15 +759,18 @@ class Server(MocapTread):
                     
                 elif self.clientCommands[s] == MOCAP_RAW_DATA:
                     print "sending raw data comand to cliant"
+                    '''
                     self.packer_cmd.pack_into(self.cmdBuffer, 0, MOCAP_RAW_DATA) 
                     s.send(self.cmdBuffer)
                     self.clientCommands[s] = None
-                
+                    '''
                 elif self.clientCommands[s] == CMD_SERVER_CLOSING:
                     print "sending raw data comand to cliant"
+                    ''''
                     self.packer_cmd.pack_into(self.cmdBuffer, 0, CMD_SERVER_CLOSING) 
                     s.send(self.cmdBuffer)
                     self.clientCommands[s] = None
+                    '''
                 else:
                     # no commands to exicutep
                     self.clientCommands[s] = None            
@@ -714,7 +793,6 @@ class Server(MocapTread):
         #self.tcpServer.close()                
         #self.exit()
         #self.emit(SIGNAL("stopingServer()"))
-
-        
+     
 if __name__ == '__main__':
     pass

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\gregmeeresyoung\workspace\NagapifaceMocap\nagapi\designer\MocapEditDialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\gregmeeresyoung\git\NagapiMocap\nagapi\designer\MocapEditDialog.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -171,7 +171,7 @@ class Ui_Dialog(object):
         self.doubleSpinBox_feq_x.setDecimals(3)
         self.doubleSpinBox_feq_x.setMaximum(1.0)
         self.doubleSpinBox_feq_x.setSingleStep(0.001)
-        self.doubleSpinBox_feq_x.setProperty("value", 0.03)
+        self.doubleSpinBox_feq_x.setProperty("value", 0.15)
         self.doubleSpinBox_feq_x.setObjectName(_fromUtf8("doubleSpinBox_feq_x"))
         self.horizontalLayout_x_2.addWidget(self.doubleSpinBox_feq_x)
         self.label_x_2 = QtGui.QLabel(self.groupBox_x_2)
@@ -218,7 +218,7 @@ class Ui_Dialog(object):
         self.doubleSpinBox_feq_y.setDecimals(3)
         self.doubleSpinBox_feq_y.setMaximum(1.0)
         self.doubleSpinBox_feq_y.setSingleStep(0.001)
-        self.doubleSpinBox_feq_y.setProperty("value", 0.03)
+        self.doubleSpinBox_feq_y.setProperty("value", 0.15)
         self.doubleSpinBox_feq_y.setObjectName(_fromUtf8("doubleSpinBox_feq_y"))
         self.horizontalLayout_y.addWidget(self.doubleSpinBox_feq_y)
         self.label_y_2 = QtGui.QLabel(self.groupBox_y_2)
@@ -266,7 +266,7 @@ class Ui_Dialog(object):
         self.doubleSpinBox_feq_w.setDecimals(3)
         self.doubleSpinBox_feq_w.setMaximum(1.0)
         self.doubleSpinBox_feq_w.setSingleStep(0.001)
-        self.doubleSpinBox_feq_w.setProperty("value", 0.03)
+        self.doubleSpinBox_feq_w.setProperty("value", 0.15)
         self.doubleSpinBox_feq_w.setObjectName(_fromUtf8("doubleSpinBox_feq_w"))
         self.horizontalLayout_w_2.addWidget(self.doubleSpinBox_feq_w)
         self.label_w_2 = QtGui.QLabel(self.groupBox_w_2)
@@ -314,7 +314,7 @@ class Ui_Dialog(object):
         self.doubleSpinBox_feq_h.setDecimals(3)
         self.doubleSpinBox_feq_h.setMaximum(1.0)
         self.doubleSpinBox_feq_h.setSingleStep(0.001)
-        self.doubleSpinBox_feq_h.setProperty("value", 0.03)
+        self.doubleSpinBox_feq_h.setProperty("value", 0.15)
         self.doubleSpinBox_feq_h.setObjectName(_fromUtf8("doubleSpinBox_feq_h"))
         self.horizontalLayout_h.addWidget(self.doubleSpinBox_feq_h)
         self.label_h_2 = QtGui.QLabel(self.groupBox_h_2)

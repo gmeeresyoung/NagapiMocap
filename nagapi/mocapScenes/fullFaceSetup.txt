@@ -1,0 +1,352 @@
+0:
+  custemRege: {bottomRightX: 220.0, bottomRightY: 132.0, colourID: 2, custemRegen: false,
+    height: 54.0, topLeftX: 187.0, topLeftY: 78.0, width: 33.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: syncControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 0
+1:
+  custemRege: {bottomRightX: 332.0, bottomRightY: 235.0, colourID: 1, custemRegen: false,
+    height: 44.0, topLeftX: 303.0, topLeftY: 191.0, width: 29.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RmouthControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 3
+2:
+  custemRege: {bottomRightX: 109.0, bottomRightY: 232.0, colourID: 1, custemRegen: false,
+    height: 51, topLeftX: 81.0, topLeftY: 181.0, width: 28}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LmouthControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 4
+3:
+  custemRege: {bottomRightX: 256.0, bottomRightY: 193.0, colourID: 1, custemRegen: false,
+    height: 38, topLeftX: 213.0, topLeftY: 155.0, width: 43}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    wChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    xChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RBottomLipControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 1
+4:
+  custemRege: {bottomRightX: 192.0, bottomRightY: 186.0, colourID: 1, custemRegen: false,
+    height: 45, topLeftX: 147.0, topLeftY: 141.0, width: 45}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    wChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    xChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LBottomLipControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 2
+5:
+  custemRege: {bottomRightX: 360.0, bottomRightY: 322.0, colourID: 1, custemRegen: false,
+    height: 31.0, topLeftX: 322.0, topLeftY: 291.0, width: 38.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RcheekControls
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 8
+6:
+  custemRege: {bottomRightX: 79.0, bottomRightY: 334.0, colourID: 1, custemRegen: false,
+    height: 42.0, topLeftX: 39.0, topLeftY: 292.0, width: 40.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LcheekControls
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 7
+7:
+  custemRege: {bottomRightX: 323.0, bottomRightY: 386.0, colourID: 1, custemRegen: false,
+    height: 40.0, topLeftX: 289.0, topLeftY: 346.0, width: 34.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RinnerCheekControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 9
+8:
+  custemRege: {bottomRightX: 129.0, bottomRightY: 397.0, colourID: 1, custemRegen: false,
+    height: 36.0, topLeftX: 89.0, topLeftY: 361.0, width: 40.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LinnerCheekControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 10
+9:
+  custemRege: {bottomRightX: 256.0, bottomRightY: 251.0, colourID: 2, custemRegen: false,
+    height: 45, topLeftX: 212.0, topLeftY: 206.0, width: 44}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    wChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    xChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: RTopLipControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 5
+10:
+  custemRege: {bottomRightX: 180.0, bottomRightY: 258.0, colourID: 2, custemRegen: false,
+    height: 45, topLeftX: 135.0, topLeftY: 213.0, width: 45}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    wChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    xChannel: {filterbufferSize: 150, freq: 0.25, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: true}
+  name: LTopLipControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 6
+11:
+  custemRege: {bottomRightX: 373.0, bottomRightY: 409.0, colourID: 1, custemRegen: false,
+    height: 37, topLeftX: 346.0, topLeftY: 372.0, width: 27}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RupperCheekControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 11
+12:
+  custemRege: {bottomRightX: 53.0, bottomRightY: 417.0, colourID: 1, custemRegen: false,
+    height: 39.0, topLeftX: 27.0, topLeftY: 378.0, width: 26.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LupperCheekControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 12
+13:
+  custemRege: {bottomRightX: 343.0, bottomRightY: 447.0, colourID: 2, custemRegen: false,
+    height: 29.0, topLeftX: 312.0, topLeftY: 418.0, width: 31.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RlowerLidControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 13
+14:
+  custemRege: {bottomRightX: 346.0, bottomRightY: 512.0, colourID: 1, custemRegen: false,
+    height: 31, topLeftX: 312.0, topLeftY: 481.0, width: 34}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.2, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.2, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RupperLidControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 15
+15:
+  custemRege: {bottomRightX: 364.0, bottomRightY: 548.0, colourID: 2, custemRegen: false,
+    height: 34, topLeftX: 336.0, topLeftY: 514.0, width: 28}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RBrowControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 17
+16:
+  custemRege: {bottomRightX: 252.0, bottomRightY: 558.0, colourID: 1, custemRegen: false,
+    height: 29, topLeftX: 217.0, topLeftY: 529.0, width: 35}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: RInnerBrowControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 19
+17:
+  custemRege: {bottomRightX: 191.0, bottomRightY: 570.0, colourID: 1, custemRegen: false,
+    height: 40, topLeftX: 153.0, topLeftY: 530.0, width: 38}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LInnerBrowControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 20
+18:
+  custemRege: {bottomRightX: 72.0, bottomRightY: 561.0, colourID: 2, custemRegen: false,
+    height: 40, topLeftX: 42.0, topLeftY: 521.0, width: 30}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LBrowControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 18
+19:
+  custemRege: {bottomRightX: 87.0, bottomRightY: 518.0, colourID: 1, custemRegen: false,
+    height: 24, topLeftX: 60.0, topLeftY: 494.0, width: 27}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.2, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.2, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LupperLidControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 16
+20:
+  custemRege: {bottomRightX: 91.0, bottomRightY: 455.0, colourID: 2, custemRegen: false,
+    height: 33.0, topLeftX: 58.0, topLeftY: 422.0, width: 33.0}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.1, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: LlowerLidControl
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 14
+21:
+  custemRege: {bottomRightX: 229.0, bottomRightY: 422.0, colourID: 1, custemRegen: false,
+    height: 54, topLeftX: 169.0, topLeftY: 368.0, width: 60}
+  filter:
+    hChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    wChannel: {filterbufferSize: 150, freq: 0.03, gasianAv: false, lowPassFilter: false,
+      noFilter: true, output: false}
+    xChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+    yChannel: {filterbufferSize: 150, freq: 0.15, gasianAv: false, lowPassFilter: true,
+      noFilter: false, output: true}
+  name: nose
+  output: {h: false, w: false, x: true, y: true}
+  smartClasificaion: {boxSize: 40, smartClasification: false}
+  tag: 21

@@ -142,10 +142,12 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             self.actionRawData.setChecked(False)
             self.actionClassifiedData.setChecked(True)
             data = self.graphicsView.getClasificationRegens()
-            self.thread.clasifyData(data)
-            self.thread.filterData()
+            if self.thread:
+                self.thread.clasifyData(data)
+                self.thread.filterData()
         else:
-            self.thread.filterOff()
+            if self.thread:
+                self.thread.filterOff()
      
     def updateClasifyData(self):
         if self.graphicsView.regenSelected() and self.actionFilterData.isChecked():
@@ -157,11 +159,13 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         if on:
             self.actionRawData.setChecked(False)
             data = self.graphicsView.getClasificationRegens()
-            self.thread.clasifyData(data)
+            if self.thread:
+                self.thread.clasifyData(data)
         else:
             self.actionRawData.setChecked(True)
             self.actionFilterData.setChecked(False)
-            self.thread.rawData()
+            if self.thread:
+                self.thread.rawData()
 
     def rawData(self,on):
         if on:
@@ -173,12 +177,13 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             self.thread.rawData()            
           
     def recordMocap(self,startRec):
-        if startRec:
-            self.newRecordingFile()
-        else:
-            print "stop recording"
-            self.emit(QtCore.SIGNAL("stopRecording()"))
-            self.saveRecordingAs()
+        if self.thread:
+            if startRec:
+                self.newRecordingFile()
+            else:
+                print "stop recording"
+                self.emit(QtCore.SIGNAL("stopRecording()"))
+                self.saveRecordingAs()
                
     def updateSubframe(self,tag,x,y,w,h):
         #convert from camera spcae to screen space
@@ -213,8 +218,90 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
         for  tag,mbox in self.BoxSceneItems.items():
             self.boxesLastFrame[tag] = mbox 
 
-        self.fpsDisplay.display(fpsclock.speed()) 
 
+        self.fpsDisplay.display(int(fpsclock.speed())) 
+
+    def openServerOld(self,lisen):
+        #currentFile = self.getCurrentFile()
+        #display ui for inputing client programs for mocap client and plugin client 
+        if lisen:
+            if self.clientDialog.exec_():
+                             
+                if self.clientDialog.radioButton_remote.isChecked():
+                    
+                    self.thread = Server()
+                    for clasifyData in self.graphicsView.getData().values():
+                        if self.thread:
+                            self.thread.buildFromData(clasifyData)     
+                    
+                    if self.actionFilterData.isChecked():
+                        self.filterData(True)
+                    elif self.actionClassifiedData.isChecked():
+                        self.clasifyData(True)
+                    else:
+                        pass
+                    
+                    self.connectTreadSingals()
+                    if self.actionRecordMocap.isChecked():
+                        self.recordMocap(True)
+                    
+                    lisenPort = int(self.clientDialog.comboBox_lisenPort.itemText(self.clientDialog.comboBox_lisenPort.currentIndex()))
+                    mocapClientIP = self.clientDialog.comboBox_mocapIP.itemText(self.clientDialog.comboBox_mocapIP.currentIndex())
+                    pluginClientIP = self.clientDialog.comboBox_pluginIP.itemText(self.clientDialog.comboBox_pluginIP.currentIndex())
+                    print "starting server"
+                    self.thread.render(lisenPort,mocapClientIP,pluginClientIP)
+                    self.statusBar().showMessage("Lisinging for clients", 0)
+                    
+                
+                elif self.clientDialog.radioButton_local.isChecked():
+                    
+                    rawTempFile = self.getTempFile()
+                    self.thread = LocalClient(rawTempFile)
+                    
+                    for clasifyData in self.graphicsView.getData().values():
+                        if self.thread:
+                            self.thread.buildFromData(clasifyData)                    
+                    
+                    if self.actionFilterData.isChecked():
+                        self.filterData(True)
+                    elif self.actionClassifiedData.isChecked():
+                        self.clasifyData(True)
+                    else:
+                        pass
+                    
+                    self.connectTreadSingals()
+                    
+                    if self.actionRecordMocap.isChecked():
+                        self.recordMocap(True)
+                                      
+                    self.thread.render()
+                    self.statusBar().showMessage("Running local client", 0)
+            
+                else:
+                    self.thread = LocalPixey()
+                    for clasifyData in self.graphicsView.getData().values():
+                        if self.thread:
+                            self.thread.buildFromData(clasifyData)                    
+                    
+                    if self.actionFilterData.isChecked():
+                        self.filterData(True)
+                    elif self.actionClassifiedData.isChecked():
+                        self.clasifyData(True)
+                    else:
+                        pass
+
+                    self.connectTreadSingals()
+                    if self.actionRecordMocap.isChecked():
+                        self.recordMocap(True)
+                    
+                    self.thread.render()
+                    self.statusBar().showMessage("Running local client", 0)                    
+            else:
+                self.actionListenForConnections.setChecked(False)
+        else:
+            
+            self.emit(QtCore.SIGNAL("closeThred()"))#self.thread.closeServer()
+ 
     def openServer(self,lisen):
         #currentFile = self.getCurrentFile()
         #display ui for inputing client programs for mocap client and plugin client 
@@ -228,38 +315,97 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
                         if self.thread:
                             self.thread.buildFromData(clasifyData)     
                     
+                    if self.actionFilterData.isChecked():
+                        self.filterData(True)
+                    elif self.actionClassifiedData.isChecked():
+                        self.clasifyData(True)
+                    else:
+                        pass
+                    
+                    self.connectTreadSingals()
+                    if self.actionRecordMocap.isChecked():
+                        self.recordMocap(True)
+                    
                     lisenPort = int(self.clientDialog.comboBox_lisenPort.itemText(self.clientDialog.comboBox_lisenPort.currentIndex()))
                     mocapClientIP = self.clientDialog.comboBox_mocapIP.itemText(self.clientDialog.comboBox_mocapIP.currentIndex())
                     pluginClientIP = self.clientDialog.comboBox_pluginIP.itemText(self.clientDialog.comboBox_pluginIP.currentIndex())
                     print "starting server"
                     self.thread.render(lisenPort,mocapClientIP,pluginClientIP)
                     self.statusBar().showMessage("Lisinging for clients", 0)
+                    
                 
                 elif self.clientDialog.radioButton_local.isChecked():
+                    
+                    serverThread = None
+                    if self.clientDialog.groupBox_2.isChecked():
+                        print "creating that servers boyo"
+                        serverThread = Server()
+                        
                     rawTempFile = self.getTempFile()
                     self.thread = LocalClient(rawTempFile)
+                    self.thread.setServer(serverThread)
+                    
                     for clasifyData in self.graphicsView.getData().values():
                         if self.thread:
                             self.thread.buildFromData(clasifyData)                    
-                
+                    
+                    if self.actionFilterData.isChecked():
+                        self.filterData(True)
+                    elif self.actionClassifiedData.isChecked():
+                        self.clasifyData(True)
+                    else:
+                        pass
+                    
                     self.connectTreadSingals()
-                    self.thread.render()
+                    
+                    if self.actionRecordMocap.isChecked():
+                        self.recordMocap(True)
+                    
+                    lisenPort = int(self.clientDialog.comboBox_lisenPort.itemText(self.clientDialog.comboBox_lisenPort.currentIndex()))
+                    mocapClientIP = None#self.clientDialog.comboBox_mocapIP.itemText(self.clientDialog.comboBox_mocapIP.currentIndex())
+                    pluginClientIP = self.clientDialog.comboBox_pluginIP.itemText(self.clientDialog.comboBox_pluginIP.currentIndex())                  
+                    
+                    print lisenPort,mocapClientIP,pluginClientIP
+                    self.thread.render(lisenPort,mocapClientIP,pluginClientIP)
                     self.statusBar().showMessage("Running local client", 0)
             
                 else:
+                    
+                    serverThread = None
+                    if self.clientDialog.groupBox_2.isChecked():
+                        print "creating that servers boyo"
+                        serverThread = Server()
+                        
                     self.thread = LocalPixey()
+                    self.thread.setServer(serverThread)
+                    
                     for clasifyData in self.graphicsView.getData().values():
                         if self.thread:
                             self.thread.buildFromData(clasifyData)                    
-                
+                    
+                    if self.actionFilterData.isChecked():
+                        self.filterData(True)
+                    elif self.actionClassifiedData.isChecked():
+                        self.clasifyData(True)
+                    else:
+                        pass
+
                     self.connectTreadSingals()
-                    self.thread.render()
+                    if self.actionRecordMocap.isChecked():
+                        self.recordMocap(True)
+
+                    lisenPort = int(self.clientDialog.comboBox_lisenPort.itemText(self.clientDialog.comboBox_lisenPort.currentIndex()))
+                    mocapClientIP = None#self.clientDialog.comboBox_mocapIP.itemText(self.clientDialog.comboBox_mocapIP.currentIndex())
+                    pluginClientIP = self.clientDialog.comboBox_pluginIP.itemText(self.clientDialog.comboBox_pluginIP.currentIndex())                  
+                    
+                    print lisenPort,mocapClientIP,pluginClientIP                   
+                    self.thread.render(lisenPort,mocapClientIP,pluginClientIP )
                     self.statusBar().showMessage("Running local client", 0)                    
             else:
                 self.actionListenForConnections.setChecked(False)
         else:
             
-            self.emit(QtCore.SIGNAL("closeThred()"))#self.thread.closeServer()
+            self.emit(QtCore.SIGNAL("closeThred()"))#self.thread.closeServer()    
     
     def stopingServer(self):
         self.actionListenForConnections.setChecked(False)
@@ -466,7 +612,8 @@ class MainWindow( QtGui.QMainWindow, Ui_MainWindow ):
             outf << tmpfile.readAll()
         if ext == '.ma':
             print "convert ot maya ascii format"
-            outf << str(AsciiFile(tmpfile))
+            setupData = self.graphicsView.getData()
+            outf << str(AsciiFile(tmpfile,setupData))
            
         tmpfile.close()
         self.recordingModifyed = False
